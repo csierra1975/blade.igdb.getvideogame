@@ -18,7 +18,12 @@ import {
   Cover,
   Screenshot,
   ReleaseDate,
-  InvolvedCompany
+  InvolvedCompany,
+  Artwork,
+  Keyword,
+  Theme,
+  ExternalGame,
+  GameVideo
 } from '../types/igdb.js';
 
 export class IGDBService {
@@ -457,6 +462,121 @@ export class IGDBService {
     `;
 
     return this.makeRequest<ReleaseDate>('release_dates', body);
+  }
+
+  /**
+   * Get artworks by IDs
+   */
+  async getArtworksByIds(
+    ids: number[],
+    fields: string[] = ['id', 'image_id', 'url', 'width', 'height', 'alpha_channel', 'game'],
+    limit: number = 50
+  ): Promise<Artwork[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Artwork>('artworks', body);
+  }
+
+  /**
+   * Get keywords by IDs
+   */
+  async getKeywordsByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'slug', 'url'],
+    limit: number = 50
+  ): Promise<Keyword[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Keyword>('keywords', body);
+  }
+
+  /**
+   * Get themes by IDs
+   */
+  async getThemesByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'slug', 'url'],
+    limit: number = 50
+  ): Promise<Theme[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Theme>('themes', body);
+  }
+
+  /**
+   * Get external games by IDs
+   */
+  async getExternalGamesByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'url', 'category', 'external_id', 'game', 'platform'],
+    limit: number = 50
+  ): Promise<ExternalGame[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<ExternalGame>('external_games', body);
+  }
+
+  /**
+   * Get game videos by IDs
+   */
+  async getVideosByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'video_id', 'game'],
+    limit: number = 50
+  ): Promise<GameVideo[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<GameVideo>('game_videos', body);
   }
 
   /**

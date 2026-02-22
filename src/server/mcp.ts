@@ -313,6 +313,101 @@ export function createMCPServer(igdbService: IGDBService): Server {
         required: ['ids'],
       },
     },
+    {
+      name: 'artworks-by-ids',
+      description: 'Get artworks by artwork IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of artwork IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of artworks to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'keywords-by-ids',
+      description: 'Get keywords by keyword IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of keyword IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of keywords to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'themes-by-ids',
+      description: 'Get themes by theme IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of theme IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of themes to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'external-games-by-ids',
+      description: 'Get external games by external game IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of external_game IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of external games to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'videos-by-ids',
+      description: 'Get game videos by video IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of video IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of videos to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
   ];
 
   // Register tools
@@ -440,6 +535,41 @@ export function createMCPServer(igdbService: IGDBService): Server {
           const ids = (args as any).ids || [];
           const limit = (args as any).limit || 50;
           result = await igdbService.getReleaseDatesByIds(ids, undefined, limit);
+          break;
+        }
+        case 'artworks-by-ids': {
+          console.error('[artworks-by-ids] Fetching artworks');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getArtworksByIds(ids, undefined, limit);
+          break;
+        }
+        case 'keywords-by-ids': {
+          console.error('[keywords-by-ids] Fetching keywords');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getKeywordsByIds(ids, undefined, limit);
+          break;
+        }
+        case 'themes-by-ids': {
+          console.error('[themes-by-ids] Fetching themes');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getThemesByIds(ids, undefined, limit);
+          break;
+        }
+        case 'external-games-by-ids': {
+          console.error('[external-games-by-ids] Fetching external games');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getExternalGamesByIds(ids, undefined, limit);
+          break;
+        }
+        case 'videos-by-ids': {
+          console.error('[videos-by-ids] Fetching game videos');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getVideosByIds(ids, undefined, limit);
           break;
         }
         default:

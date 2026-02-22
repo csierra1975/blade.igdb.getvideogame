@@ -133,6 +133,49 @@ export interface ReleaseDate {
   created_at?: number;
 }
 
+export interface Artwork {
+  id: number;
+  image_id: string;
+  url?: string;
+  width?: number;
+  height?: number;
+  alpha_channel?: boolean;
+  game?: number;
+}
+
+export interface Keyword {
+  id: number;
+  name: string;
+  slug: string;
+  url?: string;
+}
+
+export interface Theme {
+  id: number;
+  name: string;
+  slug: string;
+  url?: string;
+}
+
+export interface ExternalGame {
+  id: number;
+  name?: string;
+  url?: string;
+  category?: number;
+  external_id?: string;
+  game?: number;
+  platform?: number;
+  created_at?: number;
+  updated_at?: number;
+}
+
+export interface GameVideo {
+  id: number;
+  name?: string;
+  video_id?: string;
+  game?: number;
+}
+
 /**
  * Game Status Enum
  * 0 = Released
