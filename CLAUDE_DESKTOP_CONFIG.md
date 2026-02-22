@@ -141,23 +141,28 @@ The codebase uses `console.error()` for all logging to keep stdout clean for pro
 
 ## Available Tools
 
-Once connected, Claude Desktop will have access to these 9 tools:
+Once connected, Claude Desktop will have access to these 10 tools:
 
 1. **search-games** - Search games by name
-2. **games-by-company** - Get games by developer/publisher (requires Company ID)
-3. **games-upcoming** - Get games releasing within a date range (requires Unix timestamp)
-4. **games-coming-soon** - Get games with "Coming Soon" status
-5. **platforms** - List all gaming platforms (PlayStation, Xbox, PC, etc.)
-6. **genres** - List game genres for categorization
-7. **franchises** - List game franchises (Assassin's Creed, The Legend of Zelda, etc.)
-8. **companies** - List game companies (developers and publishers)
-9. **game-modes** - List game modes (singleplayer, multiplayer, co-op, etc.)
+2. **game-details** - Get comprehensive game information by ID (ratings, descriptions, images, platforms, developers, etc.)
+3. **games-by-company** - Get games by developer/publisher (requires Company ID)
+4. **games-upcoming** - Get games releasing within a date range (requires Unix timestamp)
+5. **games-coming-soon** - Get games with "Coming Soon" status
+6. **platforms** - List all gaming platforms (PlayStation, Xbox, PC, etc.)
+7. **genres** - List game genres for categorization
+8. **franchises** - List game franchises (Assassin's Creed, The Legend of Zelda, etc.)
+9. **companies** - List game companies (developers and publishers)
+10. **game-modes** - List game modes (singleplayer, multiplayer, co-op, etc.)
 
 ### Example Usage in Claude
 
 **User**: "Search for games named 'Elden Ring'"
 
 Claude will use the `search-games` tool to fetch data from IGDB.
+
+**User**: "Get detailed information about Metal Gear Acid 2"
+
+Claude will use the `game-details` tool with the game ID to fetch comprehensive information including ratings, storyline, platforms, companies, and media assets.
 
 ## Complete Configuration Example
 

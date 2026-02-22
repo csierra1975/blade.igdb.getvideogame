@@ -105,6 +105,42 @@ export class IGDBService {
   }
 
   /**
+   * Get detailed information about a game by ID
+   */
+  async getGameDetails(
+    gameId: number,
+    fields: string[] = [
+      'name',
+      'slug',
+      'summary',
+      'storyline',
+      'rating',
+      'aggregated_rating',
+      'first_release_date',
+      'release_dates',
+      'platforms',
+      'genres',
+      'game_modes',
+      'themes',
+      'keywords',
+      'involved_companies',
+      'cover',
+      'artworks',
+      'screenshots',
+      'videos',
+      'external_games'
+    ]
+  ): Promise<Game[]> {
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = ${gameId};
+    `;
+
+    return this.makeRequest<Game>('games', body);
+  }
+
+  /**
    * Get games by company involvement
    */
   async getGamesByCompany(

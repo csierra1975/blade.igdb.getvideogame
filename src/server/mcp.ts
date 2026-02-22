@@ -59,6 +59,50 @@ export function createMCPServer(igdbService: IGDBService): McpServer {
     }
   });
 
+  // Register game-details tool
+  server.registerTool('game-details', {
+    description: 'Get detailed information about a specific game by ID (including description, images, ratings, etc.)',
+    inputSchema: {
+      gameId: z.number(),
+      fields: z
+        .array(z.string())
+        .optional()
+    }
+  }, async ({ gameId, fields }: { gameId: number; fields?: string[] }) => {
+    try {
+      console.error(`[MCPServer] Calling tool: game-details with gameId: ${gameId}`);
+
+      const games = await igdbService.getGameDetails(gameId, fields);
+      const result = igdbService.formatResponse(
+        games,
+        `Found game details for ID ${gameId}`
+      );
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2)
+          }
+        ]
+      };
+    } catch (error) {
+      console.error('[MCPServer] Error in game-details:', error);
+      const errorResult = igdbService.formatError(
+        error instanceof Error ? error : new Error(String(error))
+      );
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(errorResult, null, 2)
+          }
+        ],
+        isError: true
+      };
+    }
+  });
+
   // Register games-by-company tool
   server.registerTool('games-by-company', {
     description: 'Get games developed or published by a specific company',
