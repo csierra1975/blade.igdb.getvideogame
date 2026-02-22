@@ -4,7 +4,7 @@ A robust Model Context Protocol (MCP) server for Node.js that provides seamless 
 
 ## Features
 
-- 🎮 **10 MCP Tools** for querying games, platforms, genres, franchises, companies, and game modes
+- 🎮 **17 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, release dates, and involved companies
 - 🔐 **OAuth2 Authentication** with Twitch Developer credentials
 - ⚡ **Rate Limiting** with local throttling to respect IGDB API limits
 - 📝 **Full TypeScript** with strict type checking and Zod validation
@@ -142,6 +142,98 @@ Get list of game modes (singleplayer, multiplayer, co-op, etc.).
 ```json
 {
   "fields": ["name", "slug"]
+}
+```
+
+### Entity Resolution Tools
+
+#### 11. `covers-by-ids`
+Get cover images by cover IDs (resolves cover image URLs and metadata).
+
+**Input:**
+```json
+{
+  "ids": [172391, 257530],
+  "limit": 50
+}
+```
+
+**Example Output:**
+```json
+{
+  "id": 172391,
+  "image_id": "co5glk",
+  "url": "https://images.igdb.com/igdb/image/upload/t_thumb/co5glk.jpg",
+  "width": 264,
+  "height": 352
+}
+```
+
+#### 12. `platforms-by-ids`
+Get platform details by platform IDs.
+
+**Input:**
+```json
+{
+  "ids": [6, 48, 49],
+  "limit": 50
+}
+```
+
+#### 13. `genres-by-ids`
+Get genre details by genre IDs.
+
+**Input:**
+```json
+{
+  "ids": [12, 16, 24],
+  "limit": 50
+}
+```
+
+#### 14. `involved-companies-by-ids`
+Get involved companies by IDs (automatically resolves company details including name, description, and logo).
+
+**Input:**
+```json
+{
+  "ids": [106687, 225257],
+  "limit": 50
+}
+```
+
+**Returns company details automatically resolved for convenience.**
+
+#### 15. `companies-by-ids`
+Get company details by company IDs.
+
+**Input:**
+```json
+{
+  "ids": [5, 10, 26],
+  "limit": 50
+}
+```
+
+#### 16. `screenshots-by-ids`
+Get screenshot details by screenshot IDs (resolves screenshot image URLs and metadata).
+
+**Input:**
+```json
+{
+  "ids": [384132, 445566],
+  "limit": 50
+}
+```
+
+#### 17. `release-dates-by-ids`
+Get release date details by release date IDs (includes human-readable date formats and region/platform info).
+
+**Input:**
+```json
+{
+  "ids": [612584, 612586],
+  "limit": 50
 }
 ```
 

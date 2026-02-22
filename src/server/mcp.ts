@@ -180,6 +180,139 @@ export function createMCPServer(igdbService: IGDBService): Server {
         required: [],
       },
     },
+    {
+      name: 'covers-by-ids',
+      description: 'Get cover images by cover IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of cover IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of covers to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'platforms-by-ids',
+      description: 'Get platform details by platform IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of platform IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of platforms to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'genres-by-ids',
+      description: 'Get genre details by genre IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of genre IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of genres to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'involved-companies-by-ids',
+      description: 'Get involved companies by involved company IDs (resolves company details automatically)',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of involved_company IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of involved companies to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'companies-by-ids',
+      description: 'Get company details by company IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of company IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of companies to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'screenshots-by-ids',
+      description: 'Get screenshots by screenshot IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of screenshot IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of screenshots to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'release-dates-by-ids',
+      description: 'Get release date details by release date IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of release_date IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of release dates to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
   ];
 
   // Register tools
@@ -258,6 +391,55 @@ export function createMCPServer(igdbService: IGDBService): Server {
         case 'game-modes': {
           console.error('[game-modes] Fetching game modes');
           result = await igdbService.getGameModes((args as any).limit);
+          break;
+        }
+        case 'covers-by-ids': {
+          console.error('[covers-by-ids] Fetching covers');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getCoversByIds(ids, undefined, limit);
+          break;
+        }
+        case 'platforms-by-ids': {
+          console.error('[platforms-by-ids] Fetching platforms');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getPlatformsByIds(ids, undefined, limit);
+          break;
+        }
+        case 'genres-by-ids': {
+          console.error('[genres-by-ids] Fetching genres');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getGenresByIds(ids, undefined, limit);
+          break;
+        }
+        case 'involved-companies-by-ids': {
+          console.error('[involved-companies-by-ids] Fetching involved companies');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getInvolvedCompaniesByIds(ids, undefined, limit);
+          break;
+        }
+        case 'companies-by-ids': {
+          console.error('[companies-by-ids] Fetching companies');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getCompaniesByIds(ids, undefined, limit);
+          break;
+        }
+        case 'screenshots-by-ids': {
+          console.error('[screenshots-by-ids] Fetching screenshots');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getScreenshotsByIds(ids, undefined, limit);
+          break;
+        }
+        case 'release-dates-by-ids': {
+          console.error('[release-dates-by-ids] Fetching release dates');
+          const ids = (args as any).ids || [];
+          const limit = (args as any).limit || 50;
+          result = await igdbService.getReleaseDatesByIds(ids, undefined, limit);
           break;
         }
         default:

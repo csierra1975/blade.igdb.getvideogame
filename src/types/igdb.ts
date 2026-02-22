@@ -105,6 +105,34 @@ export interface InvolvedCompany {
   supporting: boolean;
 }
 
+export interface Cover {
+  id: number;
+  image_id: string;
+  url?: string;
+  width?: number;
+  height?: number;
+  alpha_channel?: boolean;
+  game?: number;
+}
+
+export interface Screenshot {
+  id: number;
+  image_id: string;
+  url?: string;
+  width?: number;
+  height?: number;
+  game?: number;
+}
+
+export interface ReleaseDate {
+  id: number;
+  date?: number;
+  human?: string;
+  platform?: number;
+  region?: number;
+  created_at?: number;
+}
+
 /**
  * Game Status Enum
  * 0 = Released

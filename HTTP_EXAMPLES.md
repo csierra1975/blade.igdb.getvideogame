@@ -323,6 +323,145 @@ curl -X POST http://localhost:3000/mcp \
   }'
 ```
 
+## Entity Resolution Requests
+
+### Covers by IDs
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 10,
+    "method": "tools/call",
+    "params": {
+      "name": "covers-by-ids",
+      "arguments": {
+        "ids": [172391, 257530],
+        "limit": 50
+      }
+    }
+  }'
+```
+
+### Platforms by IDs
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 11,
+    "method": "tools/call",
+    "params": {
+      "name": "platforms-by-ids",
+      "arguments": {
+        "ids": [6, 48, 49]
+      }
+    }
+  }'
+```
+
+### Genres by IDs
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 12,
+    "method": "tools/call",
+    "params": {
+      "name": "genres-by-ids",
+      "arguments": {
+        "ids": [12, 16, 24]
+      }
+    }
+  }'
+```
+
+### Involved Companies by IDs
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 13,
+    "method": "tools/call",
+    "params": {
+      "name": "involved-companies-by-ids",
+      "arguments": {
+        "ids": [106687, 225257],
+        "limit": 50
+      }
+    }
+  }'
+```
+
+Note: Company details are automatically resolved and included in the response.
+
+### Companies by IDs
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 14,
+    "method": "tools/call",
+    "params": {
+      "name": "companies-by-ids",
+      "arguments": {
+        "ids": [5, 10, 26]
+      }
+    }
+  }'
+```
+
+### Screenshots by IDs
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 15,
+    "method": "tools/call",
+    "params": {
+      "name": "screenshots-by-ids",
+      "arguments": {
+        "ids": [384132, 445566]
+      }
+    }
+  }'
+```
+
+### Release Dates by IDs
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 16,
+    "method": "tools/call",
+    "params": {
+      "name": "release-dates-by-ids",
+      "arguments": {
+        "ids": [612584, 612586]
+      }
+    }
+  }'
+```
+
 ## Testing with Postman
 
 1. Import these requests into Postman

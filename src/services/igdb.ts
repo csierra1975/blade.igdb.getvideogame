@@ -14,7 +14,11 @@ import {
   Company,
   GameMode,
   GameStatus,
-  ToolResponse
+  ToolResponse,
+  Cover,
+  Screenshot,
+  ReleaseDate,
+  InvolvedCompany
 } from '../types/igdb.js';
 
 export class IGDBService {
@@ -270,6 +274,189 @@ export class IGDBService {
     `;
 
     return this.makeRequest<GameMode>('game_modes', body);
+  }
+
+  /**
+   * Get covers by IDs
+   */
+  async getCoversByIds(
+    ids: number[],
+    fields: string[] = ['id', 'image_id', 'url', 'width', 'height', 'alpha_channel'],
+    limit: number = 50
+  ): Promise<Cover[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Cover>('covers', body);
+  }
+
+  /**
+   * Get platforms by IDs
+   */
+  async getPlatformsByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'slug', 'abbreviation', 'category'],
+    limit: number = 50
+  ): Promise<Platform[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Platform>('platforms', body);
+  }
+
+  /**
+   * Get genres by IDs
+   */
+  async getGenresByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'slug', 'url'],
+    limit: number = 50
+  ): Promise<Genre[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Genre>('genres', body);
+  }
+
+  /**
+   * Get involved_companies by IDs and resolve company details
+   */
+  async getInvolvedCompaniesByIds(
+    ids: number[],
+    fields: string[] = ['id', 'company', 'game', 'developer', 'publisher', 'porting', 'supporting'],
+    limit: number = 50
+  ): Promise<InvolvedCompany[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    const results = await this.makeRequest<any>('involved_companies', body);
+    
+    // Extract unique company IDs
+    const companyIds = new Set<number>();
+    results.forEach(ic => {
+      if (typeof ic.company === 'number') {
+        companyIds.add(ic.company);
+      }
+    });
+
+    // If company IDs are numbers, resolve them to full Company objects
+    if (companyIds.size > 0) {
+      const companies = await this.getCompaniesByIds(Array.from(companyIds));
+      const companyMap = new Map(companies.map(c => [c.id, c]));
+
+      // Enrich results with resolved company objects
+      return results.map(ic => ({
+        ...ic,
+        company: companyMap.get(ic.company) || { id: ic.company, name: 'Unknown' }
+      }));
+    }
+
+    return results;
+  }
+
+  /**
+   * Get companies by IDs
+   */
+  async getCompaniesByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'slug', 'description', 'country', 'logo'],
+    limit: number = 50
+  ): Promise<Company[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Company>('companies', body);
+  }
+
+  /**
+   * Get screenshots by IDs
+   */
+  async getScreenshotsByIds(
+    ids: number[],
+    fields: string[] = ['id', 'image_id', 'url', 'width', 'height'],
+    limit: number = 50
+  ): Promise<Screenshot[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Screenshot>('screenshots', body);
+  }
+
+  /**
+   * Get release dates by IDs
+   */
+  async getReleaseDatesByIds(
+    ids: number[],
+    fields: string[] = ['id', 'date', 'human', 'platform', 'region'],
+    limit: number = 50
+  ): Promise<ReleaseDate[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<ReleaseDate>('release_dates', body);
   }
 
   /**
