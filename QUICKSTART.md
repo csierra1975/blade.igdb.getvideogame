@@ -124,8 +124,9 @@ This shows current request queue and timing.
 ## Next Steps
 
 - Read the [full README](README.md) for detailed documentation
-- Check [GITHUB_SETUP.md](GITHUB_SETUP.md) to push to GitHub
+- Star the [GitHub repository](https://github.com/csierra1975/blade.igdb.getvideogame)
 - Review [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines
+- Check [GITHUB_SETUP.md](GITHUB_SETUP.md) for deployment instructions
 
 ## Environment Variables Reference
 

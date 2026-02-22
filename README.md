@@ -369,13 +369,21 @@ All tools return responses in this format:
 
 MIT License - See LICENSE file for details
 
+## Repository
+
+**Public Repository**: https://github.com/csierra1975/blade.igdb.getvideogame
+
+This is an open-source project and contributions are welcome!
+
 ## Support
 
 For issues, questions, or contributions:
 
-1. Check existing issues in the repository
-2. Review IGDB API documentation at https://api-docs.igdb.com/
-3. Consult Twitch Developer documentation at https://dev.twitch.tv/docs
+1. Visit the [GitHub repository](https://github.com/csierra1975/blade.igdb.getvideogame)
+2. Check existing [issues](https://github.com/csierra1975/blade.igdb.getvideogame/issues)
+3. Create a new [issue](https://github.com/csierra1975/blade.igdb.getvideogame/issues/new) if you find a bug
+4. Review [IGDB API documentation](https://api-docs.igdb.com/)
+5. Consult [Twitch Developer documentation](https://dev.twitch.tv/docs)
 
 ## Additional Resources
 

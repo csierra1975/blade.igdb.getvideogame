@@ -10,13 +10,13 @@ This guide helps you create a private GitHub repository for this project and pus
 - Git installed locally
 - SSH key configured with GitHub (recommended) or GitHub CLI token
 
-### Step 1: Create a Private Repository on GitHub
+### Step 1: Create a Public Repository on GitHub
 
 1. Go to [GitHub.com](https://github.com)
 2. Click **+** (top right) → **New repository**
-3. Enter repository name: `igdb-mcp-server`
+3. Enter repository name: `blade.igdb.getvideogame`
 4. Add description: `MCP Server for IGDB API integration with Node.js and TypeScript`
-5. Select **Private** visibility
+5. Select **Public** visibility
 6. **DO NOT** initialize with README (we already have one)
 7. Click **Create repository**
 
@@ -27,10 +27,10 @@ Copy the HTTPS or SSH URL from your GitHub repo, then run:
 ```bash
 cd "d:\DESARROLLO\APLICACIONES AI\IGDB Videojuegos"
 
-# Replace with YOUR repository URL
-git remote add origin https://github.com/YOUR_USERNAME/igdb-mcp-server.git
+# Using HTTPS (recommended for simplicity)
+git remote add origin https://github.com/csierra1975/blade.igdb.getvideogame.git
 # OR if using SSH:
-# git remote add origin git@github.com:YOUR_USERNAME/igdb-mcp-server.git
+# git remote add origin git@github.com:csierra1975/blade.igdb.getvideogame.git
 ```
 
 ### Step 3: Rename Branch (if needed)
