@@ -161,16 +161,20 @@ export class IGDBService {
    * Get upcoming games by release date
    */
   async getGamesByReleaseDate(
-    futureDate: number,
-    fields: string[] = ['name', 'first_release_date', 'platforms', 'status']
+    dateFrom?: number,
+    dateTo?: number,
+    fields: string[] = ['name', 'first_release_date', 'platforms', 'status'],
+    limit: number = 10
   ): Promise<Game[]> {
     const now = Math.floor(Date.now() / 1000);
+    const from = typeof dateFrom === 'number' ? dateFrom : now;
+    const to = typeof dateTo === 'number' ? dateTo : (from + (90 * 24 * 60 * 60)); // default 90 days
     const fieldList = fields.join(', ');
     const body = `
       fields ${fieldList};
-      where first_release_date > ${now} & first_release_date < ${futureDate};
+      where first_release_date >= ${from} & first_release_date <= ${to};
       sort first_release_date asc;
-      limit 10;
+      limit ${limit};
     `;
 
     return this.makeRequest<Game>('games', body);

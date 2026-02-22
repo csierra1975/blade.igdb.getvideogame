@@ -182,7 +182,9 @@ curl -X POST http://localhost:3000/mcp \
 
 ### Games Upcoming
 
-#### Request
+#### Request (examples)
+
+By timestamp range (seconds):
 ```bash
 curl -X POST http://localhost:3000/mcp \
   -H "Content-Type: application/json" \
@@ -193,7 +195,27 @@ curl -X POST http://localhost:3000/mcp \
     "params": {
       "name": "games-upcoming",
       "arguments": {
-        "futureDate": 1735689600
+        "date_from": 1735689600,
+        "date_to": 1738291200,
+        "limit": 20
+      }
+    }
+  }'
+```
+
+Using millisecond timestamps (the server will normalize to seconds):
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 4,
+    "method": "tools/call",
+    "params": {
+      "name": "games-upcoming",
+      "arguments": {
+        "date_from": 1735689600000,
+        "date_to": 1738291200000
       }
     }
   }'

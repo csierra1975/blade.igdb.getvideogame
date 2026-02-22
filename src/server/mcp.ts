@@ -84,6 +84,14 @@ export function createMCPServer(igdbService: IGDBService): Server {
             type: 'number',
             description: 'Maximum number of games to return',
           },
+          date_from: {
+            type: 'number',
+            description: 'Unix timestamp (seconds) for start of release date filter (optional)'
+          },
+          date_to: {
+            type: 'number',
+            description: 'Unix timestamp (seconds) for end of release date filter (optional)'
+          },
         },
         required: [],
       },
@@ -204,8 +212,22 @@ export function createMCPServer(igdbService: IGDBService): Server {
         }
         case 'games-upcoming': {
           console.error('[games-upcoming] Fetching upcoming games');
-          const futureDate = Math.floor(Date.now() / 1000) + (90 * 24 * 60 * 60); // 90 days from now
-          result = await igdbService.getGamesByReleaseDate(futureDate);
+          const argsAny = args as any;
+
+          const normalizeTs = (v: any): number | undefined => {
+            if (v === undefined || v === null) return undefined;
+            const n = typeof v === 'number' ? v : Number(v);
+            if (!Number.isFinite(n) || Number.isNaN(n)) return undefined;
+            // If value looks like milliseconds (>= 1e12), convert to seconds
+            if (n > 1e12) return Math.floor(n / 1000);
+            return Math.floor(n);
+          };
+
+          const dateFrom = normalizeTs(argsAny.date_from);
+          const dateTo = normalizeTs(argsAny.date_to);
+          const limit = typeof argsAny.limit === 'number' ? argsAny.limit : undefined;
+
+          result = await igdbService.getGamesByReleaseDate(dateFrom, dateTo, undefined, limit);
           break;
         }
         case 'games-coming-soon': {

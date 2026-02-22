@@ -73,9 +73,15 @@ Get games releasing soon. By default the server returns games scheduled in the n
 **Input (optional):**
 ```json
 {
-  "limit": 10
+  "limit": 10,
+  "date_from": 1700000000,
+  "date_to": 1702592000
 }
 ```
+
+Notes:
+- `date_from` and `date_to` are optional Unix timestamps in seconds. If omitted, `date_from` defaults to now and `date_to` defaults to 90 days after `date_from`.
+- The server will automatically normalize millisecond timestamps (e.g. JS `Date.now()`) to seconds when values look like milliseconds.
 
 #### 5. `games-coming-soon`
 Get all games with "Coming Soon" status.
