@@ -63,7 +63,7 @@ async function main() {
 
     // Handle graceful shutdown
     const handleShutdown = (signal: string) => {
-      console.log(`\n[STDIO] Received ${signal}, shutting down gracefully...`);
+      console.error(`\n[STDIO] Received ${signal}, shutting down gracefully...`);
       process.exit(0);
     };
 
