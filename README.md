@@ -10,7 +10,7 @@ A robust Model Context Protocol (MCP) server for Node.js that provides seamless 
 - 📝 **Full TypeScript** with strict type checking and Zod validation
 - 🚀 **Dual Transport Support**: STDIO (Claude Desktop) + Express HTTP
 - 🧪 **Unit Tests** with Jest for core services
-- 📊 **Comprehensive Logging** to console for debugging
+ - 📊 **Comprehensive Logging** to stderr for debugging (stdout is reserved for MCP JSON-RPC)
 - 🔌 **Streaming HTTP Support** for production use
 
 ## Available Tools
@@ -23,7 +23,7 @@ Search for games by name with customizable fields.
 **Input:**
 ```json
 {
-  "searchTerm": "Elden Ring",
+  "query": "Elden Ring",
   "fields": ["name", "alternative_names", "slug"]
 }
 ```
@@ -68,13 +68,12 @@ Get all games developed or published by a specific company.
 ```
 
 #### 4. `games-upcoming`
-Get games releasing between now and a future date.
+Get games releasing soon. By default the server returns games scheduled in the next 90 days.
 
-**Input:**
+**Input (optional):**
 ```json
 {
-  "futureDate": 1735689600,
-  "fields": ["name", "first_release_date", "platforms", "status"]
+  "limit": 10
 }
 ```
 
