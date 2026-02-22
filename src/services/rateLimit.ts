@@ -66,7 +66,7 @@ export class RateLimiter {
         const item = this.requestQueue.shift();
         if (item) {
           this.requestTimestamps.push(now);
-          console.log(
+          console.error(
             `[RateLimiter] Allowing request (${this.requestTimestamps.length}/${this.maxRequests})`
           );
           item.resolve();
@@ -78,7 +78,7 @@ export class RateLimiter {
         const oldestTimestamp = this.requestTimestamps[0];
         const waitTime = this.windowMs - (now - oldestTimestamp) + 10; // +10ms buffer
 
-        console.log(
+        console.error(
           `[RateLimiter] Rate limit reached, waiting ${waitTime}ms before next request`
         );
 
@@ -125,6 +125,6 @@ export class RateLimiter {
   reset(): void {
     this.requestTimestamps = [];
     this.requestQueue = [];
-    console.log('[RateLimiter] Rate limiter reset');
+    console.error('[RateLimiter] Rate limiter reset');
   }
 }
