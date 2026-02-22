@@ -4,8 +4,8 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { TwitchAuthService } from './auth';
-import { RateLimiter } from './rateLimit';
+import { TwitchAuthService } from './auth.js';
+import { RateLimiter } from './rateLimit.js';
 import {
   Game,
   Platform,
@@ -15,7 +15,7 @@ import {
   GameMode,
   GameStatus,
   ToolResponse
-} from '../types/igdb';
+} from '../types/igdb.js';
 
 export class IGDBService {
   private apiUrl: string;
@@ -57,7 +57,7 @@ export class IGDBService {
     }
 
     try {
-      console.log(
+      console.error(
         `[IGDBService] Making request to ${endpoint} with query: ${body.substring(0, 100)}...`
       );
 
@@ -72,7 +72,7 @@ export class IGDBService {
         }
       );
 
-      console.log(
+      console.error(
         `[IGDBService] Request to ${endpoint} successful, received ${response.data.length} results`
       );
 

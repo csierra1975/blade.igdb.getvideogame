@@ -23,7 +23,7 @@ export class RateLimiter {
   constructor(config: RateLimitConfig) {
     this.maxRequests = config.maxRequests;
     this.windowMs = config.windowMs;
-    console.log(
+    console.error(
       `[RateLimiter] Initialized with ${this.maxRequests} requests per ${this.windowMs}ms`
     );
   }

@@ -14,7 +14,7 @@ import { RateLimiter } from './services/rateLimit.js';
 dotenv.config();
 
 async function main() {
-  console.log('[STDIO] Starting IGDB MCP Server on STDIO transport...');
+  console.error('[STDIO] Starting IGDB MCP Server on STDIO transport...');
 
   // Validate required environment variables
   const requiredEnvVars = ['TWITCH_CLIENT_ID', 'TWITCH_CLIENT_SECRET', 'IGDB_API_URL'];
@@ -47,19 +47,19 @@ async function main() {
     );
 
     // Validate Twitch credentials
-    console.log('[STDIO] Validating Twitch credentials...');
+    console.error('[STDIO] Validating Twitch credentials...');
     const validation = await authService.validateToken();
-    console.log(`[STDIO] Twitch credentials valid for user: ${validation.login}`);
+    console.error(`[STDIO] Twitch credentials valid for user: ${validation.login}`);
 
     // Create MCP server
     const mcpServer = createMCPServer(igdbService);
 
     // Connect to STDIO transport
     const transport = new StdioServerTransport();
-    console.log('[STDIO] Connecting to STDIO transport...');
+    console.error('[STDIO] Connecting to STDIO transport...');
     
     await mcpServer.connect(transport);
-    console.log('[STDIO] MCP Server connected successfully on STDIO');
+    console.error('[STDIO] MCP Server connected successfully on STDIO');
 
     // Handle graceful shutdown
     const handleShutdown = (signal: string) => {

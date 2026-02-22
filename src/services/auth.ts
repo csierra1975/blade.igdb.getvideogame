@@ -45,11 +45,11 @@ export class TwitchAuthService {
   async getAccessToken(): Promise<string> {
     // If token exists and hasn't expired, return it
     if (this.accessToken && Date.now() < this.tokenExpiry) {
-      console.log('[TwitchAuth] Using cached access token');
+      console.error('[TwitchAuth] Using cached access token');
       return this.accessToken;
     }
 
-    console.log('[TwitchAuth] Acquiring new access token from Twitch');
+    console.error('[TwitchAuth] Acquiring new access token from Twitch');
     return this.fetchNewToken();
   }
 
@@ -72,7 +72,7 @@ export class TwitchAuthService {
       this.accessToken = access_token;
       this.tokenExpiry = Date.now() + (expires_in - 60) * 1000;
 
-      console.log(
+      console.error(
         `[TwitchAuth] Token acquired successfully, expires in ${expires_in} seconds`
       );
 
@@ -99,7 +99,7 @@ export class TwitchAuthService {
         }
       });
 
-      console.log(
+      console.error(
         `[TwitchAuth] Token validated for user: ${response.data.login}`
       );
 

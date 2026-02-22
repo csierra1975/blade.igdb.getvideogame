@@ -5,7 +5,7 @@
 
 import * as dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
-import { NodeStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/node-streaming.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createMCPServer } from '../server/mcp.js';
 import { IGDBService } from '../services/igdb.js';
 import { TwitchAuthService } from '../services/auth.js';
@@ -65,16 +65,31 @@ async function main() {
     app.post('/mcp', async (req: Request, res: Response) => {
       console.log(`[Express] Received MCP request from ${req.ip}`);
 
-      const transport = new NodeStreamableHTTPServerTransport(req, res);
+      const transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: undefined
+      });
       const mcpServer = createMCPServer(igdbService);
 
       try {
         await mcpServer.connect(transport);
+        await transport.handleRequest(req, res, req.body);
+        res.on('close', () => {
+          console.log('[Express] Request closed');
+          transport.close();
+          mcpServer.close();
+        });
         console.log('[Express] MCP request processed successfully');
       } catch (error) {
         console.error('[Express] Error processing MCP request:', error);
         if (!res.headersSent) {
-          res.status(500).json({ error: 'Internal server error' });
+          res.status(500).json({
+            jsonrpc: '2.0',
+            error: {
+              code: -32603,
+              message: 'Internal server error'
+            },
+            id: null
+          });
         }
       }
     });
