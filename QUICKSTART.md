@@ -78,6 +78,7 @@ curl -X GET http://localhost:3000
 Once running, you have access to:
 
 - `search-games` - Search for games by name
+- `game-details` - Get comprehensive game info by ID (ratings, descriptions, platforms, companies, media)
 - `games-by-company` - Get games by developer/publisher
 - `games-upcoming` - Games releasing in date range
 - `games-coming-soon` - Games with Coming Soon status

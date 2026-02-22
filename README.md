@@ -4,7 +4,7 @@ A robust Model Context Protocol (MCP) server for Node.js that provides seamless 
 
 ## Features
 
-- 🎮 **9 MCP Tools** for querying games, platforms, genres, franchises, companies, and game modes
+- 🎮 **10 MCP Tools** for querying games, platforms, genres, franchises, companies, and game modes
 - 🔐 **OAuth2 Authentication** with Twitch Developer credentials
 - ⚡ **Rate Limiting** with local throttling to respect IGDB API limits
 - 📝 **Full TypeScript** with strict type checking and Zod validation
@@ -28,7 +28,35 @@ Search for games by name with customizable fields.
 }
 ```
 
-#### 2. `games-by-company`
+#### 2. `game-details`
+Get comprehensive game information including ratings, descriptions, platforms, companies, and media assets.
+
+**Input:**
+```json
+{
+  "gameId": 9886,
+  "fields": ["name", "summary", "rating", "aggregated_rating", "platforms", "genres", "cover"]
+}
+```
+
+**Example Output:**
+```json
+{
+  "success": true,
+  "data": [{
+    "id": 9886,
+    "name": "Metal Gear Acid 2",
+    "summary": "An All New Acid Trip! Metal Gear Acid 2 enhances the card based tactical gameplay...",
+    "rating": 79.26,
+    "aggregated_rating": 84.5,
+    "platforms": [38],
+    "genres": [12, 16, 24, 35],
+    "cover": 257530
+  }]
+}
+```
+
+#### 3. `games-by-company`
 Get all games developed or published by a specific company.
 
 **Input:**
@@ -39,7 +67,7 @@ Get all games developed or published by a specific company.
 }
 ```
 
-#### 3. `games-upcoming`
+#### 4. `games-upcoming`
 Get games releasing between now and a future date.
 
 **Input:**
@@ -50,7 +78,7 @@ Get games releasing between now and a future date.
 }
 ```
 
-#### 4. `games-coming-soon`
+#### 5. `games-coming-soon`
 Get all games with "Coming Soon" status.
 
 **Input:**
@@ -62,7 +90,7 @@ Get all games with "Coming Soon" status.
 
 ### Reference Data Tools
 
-#### 5. `platforms`
+#### 6. `platforms`
 Get information about gaming platforms (PlayStation, Xbox, PC, Nintendo, etc.).
 
 **Input:**
@@ -72,7 +100,7 @@ Get information about gaming platforms (PlayStation, Xbox, PC, Nintendo, etc.).
 }
 ```
 
-#### 6. `genres`
+#### 7. `genres`
 Get list of game genres for categorization.
 
 **Input:**
@@ -82,7 +110,7 @@ Get list of game genres for categorization.
 }
 ```
 
-#### 7. `franchises`
+#### 8. `franchises`
 Get information about game franchises (Assassin's Creed, The Legend of Zelda, etc.).
 
 **Input:**
@@ -92,7 +120,7 @@ Get information about game franchises (Assassin's Creed, The Legend of Zelda, et
 }
 ```
 
-#### 8. `companies`
+#### 9. `companies`
 Get details about game companies (developers and publishers).
 
 **Input:**
@@ -102,7 +130,7 @@ Get details about game companies (developers and publishers).
 }
 ```
 
-#### 9. `game-modes`
+#### 10. `game-modes`
 Get list of game modes (singleplayer, multiplayer, co-op, etc.).
 
 **Input:**

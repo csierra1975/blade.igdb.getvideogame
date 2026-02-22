@@ -10,7 +10,7 @@ Your IGDB MCP Server is fully implemented, tested, documented, and ready for Git
 
 ### Source Code (7 files)
 - ✅ `src/index.ts` - STDIO entry point
-- ✅ `src/server/mcp.ts` - MCP core with 9 tools
+- ✅ `src/server/mcp.ts` - MCP core with 10 tools
 - ✅ `src/services/auth.ts` - Twitch OAuth2
 - ✅ `src/services/igdb.ts` - IGDB API service
 - ✅ `src/services/rateLimit.ts` - Rate limiting

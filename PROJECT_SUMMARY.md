@@ -2,7 +2,7 @@
 
 ## Overview
 
-A complete Model Context Protocol (MCP) server for Node.js and TypeScript that integrates with the IGDB (Internet Game Database) API. The server provides 9 MCP tools for querying video game data and supports both STDIO (Claude Desktop) and HTTP (Express) transports.
+A complete Model Context Protocol (MCP) server for Node.js and TypeScript that integrates with the IGDB (Internet Game Database) API. The server provides 10 MCP tools for querying video game data and supports both STDIO (Claude Desktop) and HTTP (Express) transports.
 
 ## Project Status
 
@@ -46,10 +46,10 @@ A complete Model Context Protocol (MCP) server for Node.js and TypeScript that i
 src/
 ├── index.ts                 # STDIO transport entry point
 ├── server/
-│   └── mcp.ts             # MCP server core (9 tools)
+│   └── mcp.ts             # MCP server core (10 tools)
 ├── services/
 │   ├── auth.ts            # Twitch OAuth2 authentication
-│   ├── igdb.ts            # IGDB API service (9 methods)
+│   ├── igdb.ts            # IGDB API service (10 methods)
 │   └── rateLimit.ts       # Local rate limiting
 ├── transports/
 │   └── express.ts         # Express HTTP transport
@@ -75,41 +75,46 @@ Documentation/
 
 ## Implemented Features
 
-### 9 MCP Tools
+### 10 MCP Tools
 
 1. **search-games** - Search games by name
    - Input: searchTerm, fields
    - Output: Game objects with selected fields
 
-2. **games-by-company** - Get games by company
+2. **game-details** - Get comprehensive game information
+   - Input: gameId, fields (optional)
+   - Output: Complete game data including ratings, descriptions, platforms, companies, media assets
+   - Example: gameId 9886 returns Metal Gear Acid 2 with 18+ data fields
+
+3. **games-by-company** - Get games by company
    - Input: companyId, fields
    - Output: Games developed/published by company
 
-3. **games-upcoming** - Get games by release date range
+4. **games-upcoming** - Get games by release date range
    - Input: futureDate, fields
    - Output: Games releasing between now and future date
 
-4. **games-coming-soon** - Get "Coming Soon" games
+5. **games-coming-soon** - Get "Coming Soon" games
    - Input: fields (optional)
    - Output: Games with Coming Soon status
 
-5. **platforms** - List gaming platforms
+6. **platforms** - List gaming platforms
    - Input: fields (optional)
    - Output: All platforms (PlayStation, Xbox, PC, etc.)
 
-6. **genres** - List game genres
+7. **genres** - List game genres
    - Input: fields (optional)
    - Output: All genres
 
-7. **franchises** - List game franchises
+8. **franchises** - List game franchises
    - Input: fields (optional)
    - Output: All franchises
 
-8. **companies** - List game companies
+9. **companies** - List game companies
    - Input: fields (optional)
    - Output: Developers and publishers
 
-9. **game-modes** - List game modes
+10. **game-modes** - List game modes
    - Input: fields (optional)
    - Output: All game modes (singleplayer, multiplayer, etc.)
 

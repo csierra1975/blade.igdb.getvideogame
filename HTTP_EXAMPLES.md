@@ -107,6 +107,60 @@ curl -X POST http://localhost:3000/mcp \
 }
 ```
 
+### Game Details
+
+Get comprehensive information about a game by ID (ratings, descriptions, platforms, companies, media assets).
+
+#### Request Body
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 15,
+  "method": "tools/call",
+  "params": {
+    "name": "game-details",
+    "arguments": {
+      "gameId": 9886,
+      "fields": ["name", "summary", "rating", "aggregated_rating", "platforms", "genres", "cover"]
+    }
+  }
+}
+```
+
+#### Using curl
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 15,
+    "method": "tools/call",
+    "params": {
+      "name": "game-details",
+      "arguments": {
+        "gameId": 9886,
+        "fields": ["name", "summary", "rating", "platforms", "genres"]
+      }
+    }
+  }'
+```
+
+#### Response
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 15,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"data\":[{\"id\":9886,\"name\":\"Metal Gear Acid 2\",\"summary\":\"An All New Acid Trip! Metal Gear Acid 2 enhances the card based tactical gameplay...\",\"rating\":79.26,\"aggregated_rating\":84.5,\"platforms\":[38],\"genres\":[12,16,24,35],\"cover\":257530}],\"message\":\"Found game details for ID 9886\"}"
+      }
+    ]
+  }
+}
+```
+
 ### Games by Company
 
 #### Request
