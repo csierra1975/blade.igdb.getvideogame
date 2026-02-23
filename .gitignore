@@ -33,3 +33,6 @@ yarn-debug.log*
 # Cache
 .cache/
 .eslintcache
+
+# Vercel
+.vercel/
