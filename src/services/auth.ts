@@ -24,10 +24,12 @@ interface ValidationResponse {
 
 export class TwitchAuthService {
   private clientId: string;
-  private clientSecret: string;
   private accessToken: string | null = null;
   private tokenExpiry: number = 0;
+  private refreshPromise: Promise<string> | null = null;
   private axios: AxiosInstance;
+  // fetchNewToken uses a closure to avoid storing clientSecret on `this`
+  private readonly fetchNewToken: () => Promise<string>;
 
   constructor(clientId: string, clientSecret: string) {
     if (!clientId || !clientSecret) {
@@ -35,55 +37,59 @@ export class TwitchAuthService {
     }
 
     this.clientId = clientId;
-    this.clientSecret = clientSecret;
     this.axios = axios.create();
+
+    // Capture secret in a closure — never assigned to `this`
+    const secret = clientSecret;
+    this.fetchNewToken = async (): Promise<string> => {
+      try {
+        const response = await this.axios.post<TokenResponse>(TWITCH_AUTH_URL, null, {
+          params: {
+            client_id: this.clientId,
+            client_secret: secret,
+            grant_type: 'client_credentials'
+          }
+        });
+
+        const { access_token, expires_in } = response.data;
+
+        // Store token and set expiry with 60 second buffer
+        this.accessToken = access_token;
+        this.tokenExpiry = Date.now() + (expires_in - 60) * 1000;
+
+        console.error(
+          `[TwitchAuth] Token acquired successfully, expires in ${expires_in} seconds`
+        );
+
+        return access_token;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const message = error.response?.data?.message || error.message;
+          throw new Error(`Failed to acquire Twitch token: ${message}`);
+        }
+        throw error;
+      }
+    };
   }
 
   /**
-   * Get a valid access token, refreshing if necessary
+   * Get a valid access token, refreshing if necessary.
+   * Deduplicates concurrent refresh requests to avoid token endpoint hammering.
    */
   async getAccessToken(): Promise<string> {
-    // If token exists and hasn't expired, return it
     if (this.accessToken && Date.now() < this.tokenExpiry) {
       console.error('[TwitchAuth] Using cached access token');
       return this.accessToken;
     }
 
-    console.error('[TwitchAuth] Acquiring new access token from Twitch');
-    return this.fetchNewToken();
-  }
-
-  /**
-   * Fetch a new token from Twitch
-   */
-  private async fetchNewToken(): Promise<string> {
-    try {
-      const response = await this.axios.post<TokenResponse>(TWITCH_AUTH_URL, null, {
-        params: {
-          client_id: this.clientId,
-          client_secret: this.clientSecret,
-          grant_type: 'client_credentials'
-        }
+    if (!this.refreshPromise) {
+      console.error('[TwitchAuth] Acquiring new access token from Twitch');
+      this.refreshPromise = this.fetchNewToken().finally(() => {
+        this.refreshPromise = null;
       });
-
-      const { access_token, expires_in } = response.data;
-
-      // Store token and set expiry with 60 second buffer
-      this.accessToken = access_token;
-      this.tokenExpiry = Date.now() + (expires_in - 60) * 1000;
-
-      console.error(
-        `[TwitchAuth] Token acquired successfully, expires in ${expires_in} seconds`
-      );
-
-      return access_token;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message || error.message;
-        throw new Error(`Failed to acquire Twitch token: ${message}`);
-      }
-      throw error;
     }
+
+    return this.refreshPromise;
   }
 
   /**
@@ -119,6 +125,6 @@ export class TwitchAuthService {
   clearToken(): void {
     this.accessToken = null;
     this.tokenExpiry = 0;
-    console.log('[TwitchAuth] Token cache cleared');
+    console.error('[TwitchAuth] Token cache cleared');
   }
 }

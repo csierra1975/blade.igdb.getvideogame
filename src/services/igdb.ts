@@ -26,8 +26,13 @@ import {
   GameVideo
 } from '../types/igdb.js';
 
+function sanitizeApqlString(input: string): string {
+  return input.replace(/["\\;]/g, '').trim();
+}
+
 export class IGDBService {
   private apiUrl: string;
+  private clientId: string;
   private authService: TwitchAuthService;
   private rateLimiter: RateLimiter;
   private axios: AxiosInstance;
@@ -35,9 +40,11 @@ export class IGDBService {
   constructor(
     apiUrl: string,
     authService: TwitchAuthService,
-    rateLimiter: RateLimiter
+    rateLimiter: RateLimiter,
+    clientId: string
   ) {
     this.apiUrl = apiUrl;
+    this.clientId = clientId;
     this.authService = authService;
     this.rateLimiter = rateLimiter;
 
@@ -59,11 +66,6 @@ export class IGDBService {
     await this.rateLimiter.waitForSlot();
 
     const token = await this.authService.getAccessToken();
-    const clientId = process.env.TWITCH_CLIENT_ID;
-
-    if (!clientId) {
-      throw new Error('TWITCH_CLIENT_ID is not set');
-    }
 
     try {
       console.error(
@@ -76,7 +78,7 @@ export class IGDBService {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Client-ID': clientId
+            'Client-ID': this.clientId
           }
         }
       );
@@ -103,9 +105,13 @@ export class IGDBService {
     searchTerm: string,
     fields: string[] = ['name', 'alternative_names', 'slug']
   ): Promise<Game[]> {
+    const safeTerm = sanitizeApqlString(searchTerm);
+    if (!safeTerm) {
+      throw new Error('Invalid search term');
+    }
     const fieldList = fields.join(', ');
     const body = `
-      search "${searchTerm}";
+      search "${safeTerm}";
       fields ${fieldList};
       limit 10;
     `;
@@ -392,8 +398,9 @@ export class IGDBService {
       limit ${safeLimit};
     `;
 
-    const results = await this.makeRequest<any>('involved_companies', body);
-    
+    type RawInvolvedCompany = Omit<InvolvedCompany, 'company'> & { company: number | Company };
+    const results = await this.makeRequest<RawInvolvedCompany>('involved_companies', body);
+
     // Extract unique company IDs
     const companyIds = new Set<number>();
     results.forEach(ic => {
@@ -407,14 +414,15 @@ export class IGDBService {
       const companies = await this.getCompaniesByIds(Array.from(companyIds));
       const companyMap = new Map(companies.map(c => [c.id, c]));
 
-      // Enrich results with resolved company objects
       return results.map(ic => ({
         ...ic,
-        company: companyMap.get(ic.company) || { id: ic.company, name: 'Unknown' }
+        company: (typeof ic.company === 'number'
+          ? companyMap.get(ic.company) ?? { id: ic.company, name: 'Unknown' }
+          : ic.company) as Company
       }));
     }
 
-    return results;
+    return results as InvolvedCompany[];
   }
 
   /**

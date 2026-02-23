@@ -43,7 +43,8 @@ async function main() {
     const igdbService = new IGDBService(
       process.env.IGDB_API_URL!,
       authService,
-      rateLimiter
+      rateLimiter,
+      process.env.TWITCH_CLIENT_ID!
     );
 
     // Validate Twitch credentials

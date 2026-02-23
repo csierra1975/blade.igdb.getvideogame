@@ -14,6 +14,9 @@ interface RequestQueueItem {
 }
 
 export class RateLimiter {
+  private static readonly MAX_QUEUE = 200;
+  private static readonly QUEUE_TIMEOUT_MS = 30_000;
+
   private maxRequests: number;
   private windowMs: number;
   private requestTimestamps: number[] = [];
@@ -29,11 +32,27 @@ export class RateLimiter {
   }
 
   /**
-   * Wait if necessary to comply with rate limits
+   * Wait if necessary to comply with rate limits.
+   * Rejects if the queue is full or the item times out waiting.
    */
   async waitForSlot(): Promise<void> {
+    if (this.requestQueue.length >= RateLimiter.MAX_QUEUE) {
+      throw new Error('Rate limiter queue is full; request rejected');
+    }
+
     return new Promise((resolve, reject) => {
-      this.requestQueue.push({ resolve, reject });
+      const timer = setTimeout(() => {
+        const idx = this.requestQueue.findIndex(item => item.resolve === wrappedResolve);
+        if (idx !== -1) this.requestQueue.splice(idx, 1);
+        reject(new Error('Rate limiter timeout: request waited too long'));
+      }, RateLimiter.QUEUE_TIMEOUT_MS);
+
+      const wrappedResolve = () => {
+        clearTimeout(timer);
+        resolve();
+      };
+
+      this.requestQueue.push({ resolve: wrappedResolve, reject });
       this.processQueue();
     });
   }
@@ -120,11 +139,14 @@ export class RateLimiter {
   }
 
   /**
-   * Reset rate limiter
+   * Reset rate limiter, rejecting all pending queued requests
    */
   reset(): void {
-    this.requestTimestamps = [];
+    this.requestQueue.forEach(item =>
+      item.reject(new Error('Rate limiter was reset'))
+    );
     this.requestQueue = [];
+    this.requestTimestamps = [];
     console.error('[RateLimiter] Rate limiter reset');
   }
 }

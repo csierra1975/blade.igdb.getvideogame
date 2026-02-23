@@ -46,7 +46,8 @@ async function main() {
     const igdbService = new IGDBService(
       process.env.IGDB_API_URL!,
       authService,
-      rateLimiter
+      rateLimiter,
+      process.env.TWITCH_CLIENT_ID!
     );
 
     // Validate Twitch credentials
@@ -58,8 +59,8 @@ async function main() {
     const app = express();
 
     // Middleware
-    app.use(express.json());
-    app.use(express.raw({ type: 'application/octet-stream' }));
+    app.use(express.json({ limit: '1mb' }));
+    app.use(express.raw({ type: 'application/octet-stream', limit: '1mb' }));
 
     // MCP endpoint handler
     app.post('/mcp', async (req: Request, res: Response) => {
@@ -124,16 +125,19 @@ async function main() {
     });
 
     // Start server
-    app.listen(PORT, () => {
+    const httpServer = app.listen(PORT, () => {
       console.log(`[Express] MCP Server running on http://localhost:${PORT}`);
       console.log(`[Express] MCP endpoint: POST http://localhost:${PORT}/mcp`);
       console.log(`[Express] Health check: GET http://localhost:${PORT}/health`);
     });
 
-    // Handle graceful shutdown
+    // Handle graceful shutdown — close HTTP server before exiting
     const handleShutdown = (signal: string) => {
       console.log(`\n[Express] Received ${signal}, shutting down gracefully...`);
-      process.exit(0);
+      httpServer.close(() => {
+        console.log('[Express] HTTP server closed');
+        process.exit(0);
+      });
     };
 
     process.on('SIGINT', () => handleShutdown('SIGINT'));

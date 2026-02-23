@@ -162,7 +162,7 @@ export interface ExternalGame {
   name?: string;
   url?: string;
   category?: number;
-  external_id?: string;
+  uid?: string;
   game?: number;
   platform?: number;
   created_at?: number;
@@ -178,25 +178,15 @@ export interface GameVideo {
 
 /**
  * Game Status Enum
- * 0 = Released
- * 2 = Coming Soon
- * 3 = Cancelled
- * 4 = Rumored
+ * 0 = Released, 1 = Alpha, 2 = Coming Soon, 3 = Cancelled, 4 = Rumored, 6 = Early Access
  */
 export enum GameStatus {
   RELEASED = 0,
+  ALPHA = 1,
   COMING_SOON = 2,
   CANCELLED = 3,
-  RUMORED = 4
-}
-
-/**
- * IGDB Query response wrapper
- */
-export interface IGDBQueryResult<T> {
-  data: T[];
-  count: number;
-  success: boolean;
+  RUMORED = 4,
+  EARLY_ACCESS = 6
 }
 
 /**

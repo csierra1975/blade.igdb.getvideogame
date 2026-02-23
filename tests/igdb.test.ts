@@ -25,7 +25,8 @@ describe('IGDBService', () => {
     igdbService = new IGDBService(
       'https://api.igdb.com/v4',
       mockAuthService,
-      rateLimiter
+      rateLimiter,
+      'mock-client-id'
     );
   });
 

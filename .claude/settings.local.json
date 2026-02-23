@@ -5,7 +5,9 @@
       "Bash(curl:*)",
       "Bash(netstat:*)",
       "Read(//d/DESARROLLO/APLICACIONES AI/IGDB Videojuegos/**)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(npm test:*)",
+      "Bash(python -m json.tool:*)"
     ]
   }
 }

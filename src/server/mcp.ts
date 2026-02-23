@@ -5,28 +5,29 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { IGDBService } from '../services/igdb';
 
-export function createMCPServer(igdbService: IGDBService): Server {
-  const server = new Server({
-    name: 'igdb-mcp-server',
-    version: '1.0.0',
-  });
+// Typed argument interfaces for each tool
+interface SearchGamesArgs { query: string; }
+interface GameDetailsArgs { gameId: number; }
+interface GamesByCompanyArgs { companyId: number; limit?: number; }
+interface GamesUpcomingArgs { limit?: number; date_from?: number; date_to?: number; }
+interface LimitOnlyArgs { limit?: number; }
+interface IdListArgs { ids: number[]; limit?: number; }
 
-  // Register server capabilities so the SDK allows registering
-  // handlers for tools/list and tools/call during initialization.
-  // Use the public API `registerCapabilities` to ensure internal
-  // _capabilities are set correctly before handler registration.
-  try {
-    // @ts-ignore
-    server.registerCapabilities({ tools: { list: true, call: true } });
-  } catch (e) {
-    // If registration isn't supported by the installed SDK version,
-    // fall back to setting the internal value (best-effort).
-    (server as any)._capabilities = (server as any)._capabilities || {};
-    (server as any)._capabilities.tools = { list: true, call: true };
-  }
+function safeLimit(val: unknown, defaultVal: number, max = 50): number {
+  if (val === undefined || val === null) return defaultVal;
+  const n = Number(val);
+  if (!Number.isInteger(n) || n < 1) return defaultVal;
+  return Math.min(n, max);
+}
+
+export function createMCPServer(igdbService: IGDBService): Server {
+  const server = new Server(
+    { name: 'igdb-mcp-server', version: '1.0.0' },
+    { capabilities: { tools: {} } }
+  );
 
   // Define all tools
-  const tools: any[] = [
+  const tools = [
     {
       name: 'search-games',
       description: 'Search for video games by name',
@@ -424,152 +425,150 @@ export function createMCPServer(igdbService: IGDBService): Server {
 
       switch (name) {
         case 'search-games': {
-          console.error('[search-games] Searching for:', (args as any).query);
-          result = await igdbService.searchGames((args as any).query);
+          const { query } = args as unknown as SearchGamesArgs;
+          console.error('[search-games] Searching for:', query);
+          result = await igdbService.searchGames(query);
           break;
         }
         case 'game-details': {
-          console.error('[game-details] Fetching details for game ID:', (args as any).gameId);
-          result = await igdbService.getGameDetails((args as any).gameId);
+          const { gameId } = args as unknown as GameDetailsArgs;
+          console.error('[game-details] Fetching details for game ID:', gameId);
+          result = await igdbService.getGameDetails(gameId);
           break;
         }
         case 'games-by-company': {
-          console.error('[games-by-company] Fetching games for company ID:', (args as any).companyId);
-          result = await igdbService.getGamesByCompany((args as any).companyId, undefined, (args as any).limit);
+          const { companyId, limit: rawLimit } = args as unknown as GamesByCompanyArgs;
+          console.error('[games-by-company] Fetching games for company ID:', companyId);
+          result = await igdbService.getGamesByCompany(companyId, undefined, safeLimit(rawLimit, 10));
           break;
         }
         case 'games-upcoming': {
           console.error('[games-upcoming] Fetching upcoming games');
-          const argsAny = args as any;
+          const { limit: rawLimit, date_from, date_to } = args as unknown as GamesUpcomingArgs;
 
-          const normalizeTs = (v: any): number | undefined => {
+          const normalizeTs = (v: number | undefined): number | undefined => {
             if (v === undefined || v === null) return undefined;
-            const n = typeof v === 'number' ? v : Number(v);
+            const n = Number(v);
             if (!Number.isFinite(n) || Number.isNaN(n)) return undefined;
             // If value looks like milliseconds (>= 1e12), convert to seconds
             if (n > 1e12) return Math.floor(n / 1000);
             return Math.floor(n);
           };
 
-          const dateFrom = normalizeTs(argsAny.date_from);
-          const dateTo = normalizeTs(argsAny.date_to);
-          const limit = typeof argsAny.limit === 'number' ? argsAny.limit : undefined;
-
-          result = await igdbService.getGamesByReleaseDate(dateFrom, dateTo, undefined, limit);
+          result = await igdbService.getGamesByReleaseDate(
+            normalizeTs(date_from),
+            normalizeTs(date_to),
+            undefined,
+            safeLimit(rawLimit, 10)
+          );
           break;
         }
         case 'games-coming-soon': {
+          const { limit: rawLimit } = args as unknown as LimitOnlyArgs;
           console.error('[games-coming-soon] Fetching games coming soon');
-          result = await igdbService.getComingSoonGames(undefined, (args as any).limit);
+          result = await igdbService.getComingSoonGames(undefined, safeLimit(rawLimit, 10));
           break;
         }
         case 'platforms': {
+          const { limit: rawLimit } = args as unknown as LimitOnlyArgs;
           console.error('[platforms] Fetching platforms');
-          result = await igdbService.getPlatforms(undefined, (args as any).limit);
+          result = await igdbService.getPlatforms(undefined, safeLimit(rawLimit, 50, 500));
           break;
         }
         case 'genres': {
+          const { limit: rawLimit } = args as unknown as LimitOnlyArgs;
           console.error('[genres] Fetching genres');
-          result = await igdbService.getGenres(undefined, (args as any).limit);
+          result = await igdbService.getGenres(undefined, safeLimit(rawLimit, 50, 500));
           break;
         }
         case 'franchises': {
+          const { limit: rawLimit } = args as unknown as LimitOnlyArgs;
           console.error('[franchises] Fetching franchises');
-          result = await igdbService.getFranchises(undefined, (args as any).limit);
+          result = await igdbService.getFranchises(undefined, safeLimit(rawLimit, 50, 500));
           break;
         }
         case 'companies': {
+          const { limit: rawLimit } = args as unknown as LimitOnlyArgs;
           console.error('[companies] Fetching companies');
-          result = await igdbService.getCompanies(undefined, (args as any).limit);
+          result = await igdbService.getCompanies(undefined, safeLimit(rawLimit, 50, 500));
           break;
         }
         case 'game-modes': {
+          const { limit: rawLimit } = args as unknown as LimitOnlyArgs;
           console.error('[game-modes] Fetching game modes');
-          result = await igdbService.getGameModes(undefined, (args as any).limit);
+          result = await igdbService.getGameModes(undefined, safeLimit(rawLimit, 50, 500));
           break;
         }
         case 'covers-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[covers-by-ids] Fetching covers');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getCoversByIds(ids, undefined, limit);
+          result = await igdbService.getCoversByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'platforms-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[platforms-by-ids] Fetching platforms');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getPlatformsByIds(ids, undefined, limit);
+          result = await igdbService.getPlatformsByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'genres-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[genres-by-ids] Fetching genres');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getGenresByIds(ids, undefined, limit);
+          result = await igdbService.getGenresByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'involved-companies-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[involved-companies-by-ids] Fetching involved companies');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getInvolvedCompaniesByIds(ids, undefined, limit);
+          result = await igdbService.getInvolvedCompaniesByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'companies-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[companies-by-ids] Fetching companies');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getCompaniesByIds(ids, undefined, limit);
+          result = await igdbService.getCompaniesByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'screenshots-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[screenshots-by-ids] Fetching screenshots');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getScreenshotsByIds(ids, undefined, limit);
+          result = await igdbService.getScreenshotsByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'release-dates-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[release-dates-by-ids] Fetching release dates');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getReleaseDatesByIds(ids, undefined, limit);
+          result = await igdbService.getReleaseDatesByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'artworks-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[artworks-by-ids] Fetching artworks');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getArtworksByIds(ids, undefined, limit);
+          result = await igdbService.getArtworksByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'keywords-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[keywords-by-ids] Fetching keywords');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getKeywordsByIds(ids, undefined, limit);
+          result = await igdbService.getKeywordsByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'themes-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[themes-by-ids] Fetching themes');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getThemesByIds(ids, undefined, limit);
+          result = await igdbService.getThemesByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'external-games-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[external-games-by-ids] Fetching external games');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getExternalGamesByIds(ids, undefined, limit);
+          result = await igdbService.getExternalGamesByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         case 'videos-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[videos-by-ids] Fetching game videos');
-          const ids = (args as any).ids || [];
-          const limit = (args as any).limit || 50;
-          result = await igdbService.getVideosByIds(ids, undefined, limit);
+          result = await igdbService.getVideosByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         default:
