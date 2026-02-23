@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Read(//d/DESARROLLO/APLICACIONES AI/IGDB Videojuegos/**)",
+      "Bash(xargs:*)"
+    ]
+  }
+}

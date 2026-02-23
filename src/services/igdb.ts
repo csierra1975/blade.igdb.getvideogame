@@ -151,16 +151,20 @@ export class IGDBService {
 
   /**
    * Get games by company involvement
+   * @param companyId - IGDB company ID
+   * @param fields - Fields to retrieve (default: name, involved_companies)
+   * @param limit - Maximum number of results (default: 10)
    */
   async getGamesByCompany(
     companyId: number,
-    fields: string[] = ['name', 'involved_companies.company.name', 'involved_companies.developer']
+    fields: string[] = ['name', 'involved_companies.company.name', 'involved_companies.developer'],
+    limit: number = 10
   ): Promise<Game[]> {
     const fieldList = fields.join(', ');
     const body = `
       fields ${fieldList};
       where involved_companies.company = ${companyId};
-      limit 10;
+      limit ${limit};
     `;
 
     return this.makeRequest<Game>('games', body);
@@ -191,16 +195,19 @@ export class IGDBService {
 
   /**
    * Get games with Coming Soon status
+   * @param fields - Fields to retrieve (default: name, first_release_date, platforms, status)
+   * @param limit - Maximum number of results (default: 10)
    */
   async getComingSoonGames(
-    fields: string[] = ['name', 'first_release_date', 'platforms', 'status']
+    fields: string[] = ['name', 'first_release_date', 'platforms', 'status'],
+    limit: number = 10
   ): Promise<Game[]> {
     const fieldList = fields.join(', ');
     const body = `
       fields ${fieldList};
       where status = ${GameStatus.COMING_SOON};
       sort first_release_date asc;
-      limit 10;
+      limit ${limit};
     `;
 
     return this.makeRequest<Game>('games', body);
@@ -208,14 +215,17 @@ export class IGDBService {
 
   /**
    * Get platform information
+   * @param fields - Fields to retrieve (default: name, slug, abbreviation, category)
+   * @param limit - Maximum number of results (default: 50)
    */
   async getPlatforms(
-    fields: string[] = ['name', 'slug', 'abbreviation', 'category']
+    fields: string[] = ['name', 'slug', 'abbreviation', 'category'],
+    limit: number = 50
   ): Promise<Platform[]> {
     const fieldList = fields.join(', ');
     const body = `
       fields ${fieldList};
-      limit 50;
+      limit ${limit};
     `;
 
     return this.makeRequest<Platform>('platforms', body);
@@ -223,14 +233,17 @@ export class IGDBService {
 
   /**
    * Get genres
+   * @param fields - Fields to retrieve (default: name, slug)
+   * @param limit - Maximum number of results (default: 50)
    */
   async getGenres(
-    fields: string[] = ['name', 'slug']
+    fields: string[] = ['name', 'slug'],
+    limit: number = 50
   ): Promise<Genre[]> {
     const fieldList = fields.join(', ');
     const body = `
       fields ${fieldList};
-      limit 50;
+      limit ${limit};
     `;
 
     return this.makeRequest<Genre>('genres', body);
@@ -238,14 +251,17 @@ export class IGDBService {
 
   /**
    * Get franchises
+   * @param fields - Fields to retrieve (default: name, slug, url)
+   * @param limit - Maximum number of results (default: 50)
    */
   async getFranchises(
-    fields: string[] = ['name', 'slug', 'url']
+    fields: string[] = ['name', 'slug', 'url'],
+    limit: number = 50
   ): Promise<Franchise[]> {
     const fieldList = fields.join(', ');
     const body = `
       fields ${fieldList};
-      limit 50;
+      limit ${limit};
     `;
 
     return this.makeRequest<Franchise>('franchises', body);
@@ -253,14 +269,17 @@ export class IGDBService {
 
   /**
    * Get companies (developers and publishers)
+   * @param fields - Fields to retrieve (default: name, slug, description, country)
+   * @param limit - Maximum number of results (default: 50)
    */
   async getCompanies(
-    fields: string[] = ['name', 'slug', 'description', 'country']
+    fields: string[] = ['name', 'slug', 'description', 'country'],
+    limit: number = 50
   ): Promise<Company[]> {
     const fieldList = fields.join(', ');
     const body = `
       fields ${fieldList};
-      limit 50;
+      limit ${limit};
     `;
 
     return this.makeRequest<Company>('companies', body);
@@ -268,14 +287,17 @@ export class IGDBService {
 
   /**
    * Get game modes
+   * @param fields - Fields to retrieve (default: name, slug)
+   * @param limit - Maximum number of results (default: 50)
    */
   async getGameModes(
-    fields: string[] = ['name', 'slug']
+    fields: string[] = ['name', 'slug'],
+    limit: number = 50
   ): Promise<GameMode[]> {
     const fieldList = fields.join(', ');
     const body = `
       fields ${fieldList};
-      limit 50;
+      limit ${limit};
     `;
 
     return this.makeRequest<GameMode>('game_modes', body);
@@ -538,7 +560,7 @@ export class IGDBService {
    */
   async getExternalGamesByIds(
     ids: number[],
-    fields: string[] = ['id', 'name', 'url', 'category', 'external_id', 'game', 'platform'],
+    fields: string[] = ['id', 'name', 'url', 'category', 'uid', 'game', 'platform'],
     limit: number = 50
   ): Promise<ExternalGame[]> {
     if (!ids || ids.length === 0) {

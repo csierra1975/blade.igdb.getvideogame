@@ -194,8 +194,9 @@ git push -u origin master
 
 ## Características Implementadas ✅
 
-### MCP Tools (9 total)
+### MCP Tools (22 total)
 - ✅ search-games
+- ✅ game-details
 - ✅ games-by-company
 - ✅ games-upcoming
 - ✅ games-coming-soon
@@ -204,6 +205,18 @@ git push -u origin master
 - ✅ franchises
 - ✅ companies
 - ✅ game-modes
+- ✅ covers-by-ids
+- ✅ platforms-by-ids
+- ✅ genres-by-ids
+- ✅ involved-companies-by-ids
+- ✅ companies-by-ids
+- ✅ screenshots-by-ids
+- ✅ release-dates-by-ids
+- ✅ artworks-by-ids
+- ✅ keywords-by-ids
+- ✅ themes-by-ids
+- ✅ external-games-by-ids
+- ✅ videos-by-ids
 
 ### Transportes
 - ✅ STDIO (Claude Desktop)
@@ -309,4 +322,4 @@ git push -u origin master
 **Proyecto**: blade.igdb.getvideogame  
 **Status**: ✅ Listo para Production  
 **Licencia**: MIT  
-**Fecha**: Febrero 22, 2026  
+**Fecha**: Febrero 23, 2026

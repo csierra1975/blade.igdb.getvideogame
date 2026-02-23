@@ -435,7 +435,7 @@ export function createMCPServer(igdbService: IGDBService): Server {
         }
         case 'games-by-company': {
           console.error('[games-by-company] Fetching games for company ID:', (args as any).companyId);
-          result = await igdbService.getGamesByCompany((args as any).companyId, (args as any).limit);
+          result = await igdbService.getGamesByCompany((args as any).companyId, undefined, (args as any).limit);
           break;
         }
         case 'games-upcoming': {
@@ -460,32 +460,32 @@ export function createMCPServer(igdbService: IGDBService): Server {
         }
         case 'games-coming-soon': {
           console.error('[games-coming-soon] Fetching games coming soon');
-          result = await igdbService.getComingSoonGames((args as any).limit);
+          result = await igdbService.getComingSoonGames(undefined, (args as any).limit);
           break;
         }
         case 'platforms': {
           console.error('[platforms] Fetching platforms');
-          result = await igdbService.getPlatforms((args as any).limit);
+          result = await igdbService.getPlatforms(undefined, (args as any).limit);
           break;
         }
         case 'genres': {
           console.error('[genres] Fetching genres');
-          result = await igdbService.getGenres((args as any).limit);
+          result = await igdbService.getGenres(undefined, (args as any).limit);
           break;
         }
         case 'franchises': {
           console.error('[franchises] Fetching franchises');
-          result = await igdbService.getFranchises((args as any).limit);
+          result = await igdbService.getFranchises(undefined, (args as any).limit);
           break;
         }
         case 'companies': {
           console.error('[companies] Fetching companies');
-          result = await igdbService.getCompanies((args as any).limit);
+          result = await igdbService.getCompanies(undefined, (args as any).limit);
           break;
         }
         case 'game-modes': {
           console.error('[game-modes] Fetching game modes');
-          result = await igdbService.getGameModes((args as any).limit);
+          result = await igdbService.getGameModes(undefined, (args as any).limit);
           break;
         }
         case 'covers-by-ids': {

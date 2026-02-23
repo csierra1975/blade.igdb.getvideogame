@@ -4,7 +4,7 @@ A robust Model Context Protocol (MCP) server for Node.js that provides seamless 
 
 ## Features
 
-- 🎮 **17 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, release dates, and involved companies
+- 🎮 **22 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, artworks, videos, keywords, themes, external games, release dates, and involved companies
 - 🔐 **OAuth2 Authentication** with Twitch Developer credentials
 - ⚡ **Rate Limiting** with local throttling to respect IGDB API limits
 - 📝 **Full TypeScript** with strict type checking and Zod validation
@@ -63,7 +63,7 @@ Get all games developed or published by a specific company.
 ```json
 {
   "companyId": 1,
-  "fields": ["name", "involved_companies.company.name", "involved_companies.developer"]
+  "limit": 10
 }
 ```
 
@@ -89,7 +89,7 @@ Get all games with "Coming Soon" status.
 **Input:**
 ```json
 {
-  "fields": ["name", "first_release_date", "platforms", "status"]
+  "limit": 10
 }
 ```
 
@@ -101,7 +101,7 @@ Get information about gaming platforms (PlayStation, Xbox, PC, Nintendo, etc.).
 **Input:**
 ```json
 {
-  "fields": ["name", "slug", "abbreviation", "category"]
+  "limit": 50
 }
 ```
 
@@ -111,7 +111,7 @@ Get list of game genres for categorization.
 **Input:**
 ```json
 {
-  "fields": ["name", "slug"]
+  "limit": 50
 }
 ```
 
@@ -121,7 +121,7 @@ Get information about game franchises (Assassin's Creed, The Legend of Zelda, et
 **Input:**
 ```json
 {
-  "fields": ["name", "slug", "url"]
+  "limit": 50
 }
 ```
 
@@ -131,7 +131,7 @@ Get details about game companies (developers and publishers).
 **Input:**
 ```json
 {
-  "fields": ["name", "slug", "description", "country"]
+  "limit": 50
 }
 ```
 
@@ -141,7 +141,7 @@ Get list of game modes (singleplayer, multiplayer, co-op, etc.).
 **Input:**
 ```json
 {
-  "fields": ["name", "slug"]
+  "limit": 50
 }
 ```
 
@@ -233,6 +233,61 @@ Get release date details by release date IDs (includes human-readable date forma
 ```json
 {
   "ids": [612584, 612586],
+  "limit": 50
+}
+```
+
+#### 18. `artworks-by-ids`
+Get artwork images by artwork IDs.
+
+**Input:**
+```json
+{
+  "ids": [12345, 67890],
+  "limit": 50
+}
+```
+
+#### 19. `keywords-by-ids`
+Get keyword details by keyword IDs.
+
+**Input:**
+```json
+{
+  "ids": [334, 5600],
+  "limit": 50
+}
+```
+
+#### 20. `themes-by-ids`
+Get theme details by theme IDs (e.g. Action, Fantasy, Science Fiction).
+
+**Input:**
+```json
+{
+  "ids": [1, 17, 18],
+  "limit": 50
+}
+```
+
+#### 21. `external-games-by-ids`
+Get external game records by their IGDB external_games IDs. Useful for resolving links to Steam, GOG, and other storefronts (`uid` field contains the platform-specific identifier).
+
+**Input:**
+```json
+{
+  "ids": [1234, 5678],
+  "limit": 50
+}
+```
+
+#### 22. `videos-by-ids`
+Get game video details by video IDs (YouTube links and metadata).
+
+**Input:**
+```json
+{
+  "ids": [9001, 9002],
   "limit": 50
 }
 ```
@@ -519,6 +574,6 @@ For issues, questions, or contributions:
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: February 22, 2026  
+**Version**: 1.1.0
+**Last Updated**: February 23, 2026
 **Maintained by**: Your Name
