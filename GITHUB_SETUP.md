@@ -94,6 +94,35 @@ Each team member should:
 2. Fill in their own Twitch credentials
 3. Keep `.env` in `.gitignore` (already configured)
 
+### Setting Up Vercel Environment Variables
+
+For production deployments on Vercel, configure these in **Settings → Environment Variables**:
+
+| Variable | Description |
+|----------|-------------|
+| `TWITCH_CLIENT_ID` | Twitch Developer Client ID |
+| `TWITCH_CLIENT_SECRET` | Twitch Developer Client Secret |
+| `MCP_API_KEY` | Bearer token to protect the `/mcp` endpoint |
+
+Generate a secure `MCP_API_KEY`:
+```bash
+openssl rand -hex 32
+```
+
+Then configure your MCP client to pass the header:
+```json
+{
+  "mcpServers": {
+    "igdb": {
+      "url": "https://your-project.vercel.app/mcp",
+      "headers": {
+        "Authorization": "Bearer your-mcp-api-key"
+      }
+    }
+  }
+}
+```
+
 ## Troubleshooting
 
 ### "Permission denied (publickey)" Error
@@ -179,6 +208,7 @@ jobs:
 1. **Secrets Management**
    - Never commit `.env` with real credentials
    - Use GitHub Secrets for CI/CD
+   - Set `MCP_API_KEY` in Vercel environment variables (never in `.env` committed to repo)
    - Rotate Twitch credentials if leaked
 
 2. **Branch Protection**

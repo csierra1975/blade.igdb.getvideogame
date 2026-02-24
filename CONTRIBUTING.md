@@ -43,7 +43,8 @@ npm install
 cp .env.example .env
 
 # Edit .env with your credentials
-# Add: TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET
+# Required: TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET
+# Optional: MCP_API_KEY (leave empty for local dev)
 ```
 
 ## Development Workflow
@@ -264,6 +265,9 @@ Create an issue with:
 ## Project Structure
 
 ```
+api/
+└── index.ts              # Vercel serverless entry point
+
 src/
 ├── index.ts              # STDIO entry point
 ├── server/
@@ -278,6 +282,7 @@ src/
     └── igdb.ts          # TypeScript definitions
 
 tests/
+├── apiAuth.test.ts      # API key middleware tests
 ├── auth.test.ts
 ├── igdb.test.ts
 └── rateLimit.test.ts
@@ -305,6 +310,7 @@ To add a new MCP tool:
 - Never commit `.env` with real credentials
 - Validate all inputs
 - Use HTTPS for API calls (already done)
+- Set `MCP_API_KEY` in Vercel environment variables to protect the remote `/mcp` endpoint
 - Report security issues privately
 
 ## Questions?

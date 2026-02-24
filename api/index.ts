@@ -5,7 +5,7 @@
  */
 
 import * as dotenv from 'dotenv';
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createMCPServer } from '../src/server/mcp.js';
 import { IGDBService } from '../src/services/igdb.js';
@@ -50,9 +50,21 @@ const app = express();
 app.use(express.json({ limit: '1mb' }));
 app.use(express.raw({ type: 'application/octet-stream', limit: '1mb' }));
 
+export function requireApiKey(req: Request, res: Response, next: NextFunction) {
+  const apiKey = process.env.MCP_API_KEY;
+  if (!apiKey) return next(); // Sin variable configurada: permite acceso (desarrollo local)
+
+  const auth = req.headers['authorization'];
+  if (!auth || auth !== `Bearer ${apiKey}`) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
+  next();
+}
+
 // MCP endpoint — handles POST (requests), GET (SSE stream), DELETE (session end)
 // The SDK's StreamableHTTPServerTransport routes internally by req.method
-app.all('/mcp', async (req: Request, res: Response) => {
+app.all('/mcp', requireApiKey, async (req: Request, res: Response) => {
   try {
     const { igdbService } = getServices();
     // Stateless: a fresh transport must be created per request

@@ -6,11 +6,12 @@ A robust Model Context Protocol (MCP) server for Node.js that provides seamless 
 
 - 🎮 **22 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, artworks, videos, keywords, themes, external games, release dates, and involved companies
 - 🔐 **OAuth2 Authentication** with Twitch Developer credentials
+- 🛡️ **API Key Authentication** for the remote HTTP endpoint (optional, recommended for Vercel deployments)
 - ⚡ **Rate Limiting** with local throttling to respect IGDB API limits
 - 📝 **Full TypeScript** with strict type checking and Zod validation
 - 🚀 **Dual Transport Support**: STDIO (Claude Desktop) + Express HTTP
 - 🧪 **Unit Tests** with Jest for core services
- - 📊 **Comprehensive Logging** to stderr for debugging (stdout is reserved for MCP JSON-RPC)
+- 📊 **Comprehensive Logging** to stderr for debugging (stdout is reserved for MCP JSON-RPC)
 - 🔌 **Streaming HTTP Support** for production use
 
 ## Available Tools
@@ -326,6 +327,8 @@ IGDB_API_URL=https://api.igdb.com/v4
 EXPRESS_PORT=3000
 RATE_LIMIT_MAX_REQUESTS=4
 RATE_LIMIT_WINDOW_MS=1000
+# Leave empty for local dev; set in Vercel for production
+MCP_API_KEY=
 ```
 
 ## Getting Twitch Developer Credentials
@@ -408,6 +411,39 @@ The server runs on `http://localhost:3000` with these endpoints:
 - **GET `/health`** - Health check and rate limit status
 - **GET `/`** - Server info and endpoint documentation
 
+### Vercel Deployment
+
+The `api/index.ts` entry point wraps the Express app for serverless deployment on Vercel.
+
+#### 1. Set environment variables in Vercel
+
+In your Vercel project → **Settings → Environment Variables**, add:
+
+| Variable | Value |
+|----------|-------|
+| `TWITCH_CLIENT_ID` | Your Twitch Client ID |
+| `TWITCH_CLIENT_SECRET` | Your Twitch Client Secret |
+| `MCP_API_KEY` | A random secret (e.g. `openssl rand -hex 32`) |
+
+#### 2. Configure Claude Code to use the remote server
+
+In your Claude Code MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "igdb": {
+      "url": "https://your-project.vercel.app/mcp",
+      "headers": {
+        "Authorization": "Bearer your-mcp-api-key"
+      }
+    }
+  }
+}
+```
+
+> **Note**: `MCP_API_KEY` is optional. If not set, the `/mcp` endpoint accepts all requests (suitable for local development). When set in Vercel, any request without the correct `Authorization: Bearer <key>` header will receive a `401 Unauthorized` response.
+
 ## Development
 
 ### Run in Watch Mode (STDIO)
@@ -434,6 +470,8 @@ npm run test:watch
 
 ```
 igdb-mcp-server/
+├── api/
+│   └── index.ts                    # Vercel serverless entry point
 ├── src/
 │   ├── index.ts                    # STDIO entry point
 │   ├── server/
@@ -447,6 +485,7 @@ igdb-mcp-server/
 │   └── types/
 │       └── igdb.ts                # TypeScript type definitions
 ├── tests/
+│   ├── apiAuth.test.ts            # API key middleware tests
 │   ├── auth.test.ts               # Auth service tests
 │   ├── igdb.test.ts               # IGDB service tests
 │   └── rateLimit.test.ts          # Rate limiter tests
@@ -469,6 +508,7 @@ igdb-mcp-server/
 | `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | `4` |
 | `RATE_LIMIT_WINDOW_MS` | Rate limit window in ms | `1000` |
 | `LOG_LEVEL` | Logging level | `debug` |
+| `MCP_API_KEY` | Bearer token for `/mcp` endpoint auth | (optional) |
 
 ## Rate Limiting
 
@@ -503,6 +543,7 @@ Tests cover:
 - ✅ Rate limiter behavior and state management
 - ✅ IGDB service response formatting
 - ✅ Error handling and validation
+- ✅ API key middleware (allow/deny logic)
 
 ## API Response Format
 
