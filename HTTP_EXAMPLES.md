@@ -705,4 +705,82 @@ curl -X POST http://localhost:3000/mcp \
 
 ---
 
+### Player Perspectives by IDs
+
+Resolve player perspective IDs to readable names (e.g. First person, Third person, Isometric, Side view, VR).
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 20,
+    "method": "tools/call",
+    "params": {
+      "name": "player-perspectives-by-ids",
+      "arguments": {
+        "ids": [1, 2, 3, 4, 5]
+      }
+    }
+  }'
+```
+
+#### Response
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 20,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"id\":1,\"name\":\"First person\",\"slug\":\"first-person\"},{\"id\":2,\"name\":\"Third person\",\"slug\":\"third-person\"},{\"id\":3,\"name\":\"Bird view/Isometric\",\"slug\":\"bird-view-isometric\"}]"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### Multiplayer Modes by IDs
+
+Get detailed multiplayer mode data including co-op, split-screen, online, LAN flags and max player counts.
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 21,
+    "method": "tools/call",
+    "params": {
+      "name": "multiplayer-modes-by-ids",
+      "arguments": {
+        "ids": [1001, 1002]
+      }
+    }
+  }'
+```
+
+#### Response
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 21,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"id\":1001,\"game\":19560,\"platform\":48,\"campaigncoop\":false,\"onlinecoop\":false,\"splitscreen\":false,\"massivemultiplayer\":false,\"onlinemax\":1,\"offlinemax\":1}]"
+      }
+    ]
+  }
+}
+```
+
+---
+
 These examples cover all available endpoints and request formats!

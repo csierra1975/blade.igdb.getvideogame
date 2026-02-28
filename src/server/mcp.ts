@@ -463,6 +463,44 @@ export function createMCPServer(igdbService: IGDBService): Server {
         required: ['ids'],
       },
     },
+    {
+      name: 'player-perspectives-by-ids',
+      description: 'Get player perspective details by IDs (e.g. First person, Third person, Isometric, Side view, VR)',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of player_perspective IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of player perspectives to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'multiplayer-modes-by-ids',
+      description: 'Get multiplayer mode details by IDs. Includes co-op, split-screen, online, LAN, and player count fields',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of multiplayer_mode IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of multiplayer modes to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
   ];
 
   // Register tools
@@ -641,6 +679,18 @@ export function createMCPServer(igdbService: IGDBService): Server {
           const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[franchises-by-ids] Fetching franchises by IDs:', ids);
           result = await igdbService.getFranchisesByIds(ids, undefined, safeLimit(rawLimit, 50));
+          break;
+        }
+        case 'player-perspectives-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
+          console.error('[player-perspectives-by-ids] Fetching player perspectives:', ids);
+          result = await igdbService.getPlayerPerspectivesByIds(ids, undefined, safeLimit(rawLimit, 50));
+          break;
+        }
+        case 'multiplayer-modes-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
+          console.error('[multiplayer-modes-by-ids] Fetching multiplayer modes:', ids);
+          result = await igdbService.getMultiplayerModesByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         default:

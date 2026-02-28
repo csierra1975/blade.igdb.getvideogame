@@ -23,7 +23,9 @@ import {
   Keyword,
   Theme,
   ExternalGame,
-  GameVideo
+  GameVideo,
+  PlayerPerspective,
+  MultiplayerMode
 } from '../types/igdb.js';
 
 function sanitizeApqlString(input: string): string {
@@ -138,6 +140,8 @@ export class IGDBService {
       'game_modes',
       'themes',
       'keywords',
+      'player_perspectives',
+      'multiplayer_modes',
       'involved_companies',
       'cover',
       'artworks',
@@ -620,6 +624,7 @@ export class IGDBService {
       'id', 'name', 'slug', 'summary', 'storyline', 'rating',
       'aggregated_rating', 'first_release_date', 'release_dates',
       'platforms', 'genres', 'game_modes', 'themes', 'keywords',
+      'player_perspectives', 'multiplayer_modes',
       'involved_companies', 'cover', 'artworks', 'screenshots',
       'videos', 'external_games'
     ],
@@ -684,6 +689,60 @@ export class IGDBService {
     `;
 
     return this.makeRequest<GameVideo>('game_videos', body);
+  }
+
+  /**
+   * Get player perspectives by IDs
+   * Values: First person, Third person, Bird view/Isometric, Side view, Text, Auditory, Virtual Reality
+   */
+  async getPlayerPerspectivesByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'slug', 'url'],
+    limit: number = 50
+  ): Promise<PlayerPerspective[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<PlayerPerspective>('player_perspectives', body);
+  }
+
+  /**
+   * Get multiplayer modes by IDs
+   * Includes: campaigncoop, splitscreen, onlinecoop, offlinecoop, massivemultiplayer, player counts, etc.
+   */
+  async getMultiplayerModesByIds(
+    ids: number[],
+    fields: string[] = [
+      'id', 'game', 'platform',
+      'campaigncoop', 'dropin', 'lancoop', 'massivemultiplayer',
+      'offlinecoop', 'offlinecoopmax', 'offlinemax',
+      'onlinecoop', 'onlinecoopmax', 'onlinemax',
+      'splitscreen', 'splitscreenonline'
+    ],
+    limit: number = 50
+  ): Promise<MultiplayerMode[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<MultiplayerMode>('multiplayer_modes', body);
   }
 
   /**

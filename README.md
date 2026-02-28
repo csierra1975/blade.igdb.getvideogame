@@ -4,7 +4,7 @@ A robust Model Context Protocol (MCP) server for Node.js that provides seamless 
 
 ## Features
 
-- 🎮 **25 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, artworks, videos, keywords, themes, external games, release dates, and involved companies
+- 🎮 **27 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, artworks, videos, keywords, themes, external games, release dates, involved companies, player perspectives, and multiplayer modes
 - 🔐 **OAuth2 Authentication** with Twitch Developer credentials
 - 🛡️ **API Key Authentication** for the remote HTTP endpoint (optional, recommended for Vercel deployments)
 - ⚡ **Rate Limiting** with local throttling to respect IGDB API limits
@@ -331,7 +331,56 @@ Fetch multiple franchises at once by passing an array of franchise IDs. Includes
 ]
 ```
 
-#### 25. `search-games-by-names`
+#### 25. `player-perspectives-by-ids`
+Resolve player perspective IDs to readable names. Useful for understanding how a game is viewed: First person, Third person, Isometric, Side view, VR, etc.
+
+**Input:**
+```json
+{
+  "ids": [1, 2, 3],
+  "limit": 50
+}
+```
+
+**Example Output:**
+```json
+[
+  { "id": 1, "name": "First person",        "slug": "first-person" },
+  { "id": 2, "name": "Third person",        "slug": "third-person" },
+  { "id": 3, "name": "Bird view/Isometric", "slug": "bird-view-isometric" }
+]
+```
+
+#### 26. `multiplayer-modes-by-ids`
+Get detailed multiplayer mode data by IDs. Includes co-op, split-screen, online, LAN flags and max player counts. Essential for searching games by multiplayer capabilities.
+
+**Input:**
+```json
+{
+  "ids": [1001, 1002],
+  "limit": 50
+}
+```
+
+**Example Output:**
+```json
+[
+  {
+    "id": 1001,
+    "game": 19560,
+    "platform": 48,
+    "campaigncoop": false,
+    "onlinecoop": false,
+    "offlinecoop": false,
+    "splitscreen": false,
+    "massivemultiplayer": false,
+    "onlinemax": 1,
+    "offlinemax": 1
+  }
+]
+```
+
+#### 27. `search-games-by-names`
 Search multiple games by name and return full details in a single call. Resolves each name to its top search result ID in parallel, then fetches all details in one batch request. Optimal for multi-game lookups when IDs are not known in advance.
 
 **Input:**

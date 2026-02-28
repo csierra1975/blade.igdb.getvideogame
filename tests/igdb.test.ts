@@ -231,4 +231,103 @@ describe('IGDBService', () => {
       expect(body).toContain('slug');
     });
   });
+
+  describe('getPlayerPerspectivesByIds', () => {
+    test('should return empty array when ids is empty', async () => {
+      const result = await igdbService.getPlayerPerspectivesByIds([]);
+      expect(result).toEqual([]);
+      expect(mockPost).not.toHaveBeenCalled();
+    });
+
+    test('should query player_perspectives endpoint with correct IDs', async () => {
+      const mockPerspectives = [
+        { id: 1, name: 'First person',  slug: 'first-person' },
+        { id: 2, name: 'Third person',  slug: 'third-person' },
+        { id: 3, name: 'Bird view/Isometric', slug: 'bird-view-isometric' }
+      ];
+      mockPost.mockResolvedValueOnce({ data: mockPerspectives });
+
+      const result = await igdbService.getPlayerPerspectivesByIds([1, 2, 3]);
+
+      expect(result).toEqual(mockPerspectives);
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      const [endpoint, body] = mockPost.mock.calls[0];
+      expect(endpoint).toBe('/player_perspectives');
+      expect(body).toContain('where id = (1, 2, 3)');
+    });
+
+    test('should include default fields', async () => {
+      mockPost.mockResolvedValueOnce({ data: [] });
+
+      await igdbService.getPlayerPerspectivesByIds([1]);
+
+      const [, body] = mockPost.mock.calls[0];
+      expect(body).toContain('name');
+      expect(body).toContain('slug');
+      expect(body).toContain('url');
+    });
+
+    test('should cap ids to 50', async () => {
+      const ids = Array.from({ length: 60 }, (_, i) => i + 1);
+      mockPost.mockResolvedValueOnce({ data: [] });
+
+      await igdbService.getPlayerPerspectivesByIds(ids);
+
+      const [, body] = mockPost.mock.calls[0];
+      expect(body).not.toContain('51,');
+    });
+  });
+
+  describe('getMultiplayerModesByIds', () => {
+    test('should return empty array when ids is empty', async () => {
+      const result = await igdbService.getMultiplayerModesByIds([]);
+      expect(result).toEqual([]);
+      expect(mockPost).not.toHaveBeenCalled();
+    });
+
+    test('should query multiplayer_modes endpoint with correct IDs', async () => {
+      const mockModes = [
+        {
+          id: 1001, game: 19560, platform: 48,
+          campaigncoop: false, onlinecoop: false,
+          splitscreen: false, massivemultiplayer: false,
+          offlinemax: 1, onlinemax: 1
+        }
+      ];
+      mockPost.mockResolvedValueOnce({ data: mockModes });
+
+      const result = await igdbService.getMultiplayerModesByIds([1001]);
+
+      expect(result).toEqual(mockModes);
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      const [endpoint, body] = mockPost.mock.calls[0];
+      expect(endpoint).toBe('/multiplayer_modes');
+      expect(body).toContain('where id = (1001)');
+    });
+
+    test('should include all co-op and multiplayer fields by default', async () => {
+      mockPost.mockResolvedValueOnce({ data: [] });
+
+      await igdbService.getMultiplayerModesByIds([1]);
+
+      const [, body] = mockPost.mock.calls[0];
+      expect(body).toContain('campaigncoop');
+      expect(body).toContain('splitscreen');
+      expect(body).toContain('onlinecoop');
+      expect(body).toContain('offlinecoop');
+      expect(body).toContain('massivemultiplayer');
+      expect(body).toContain('onlinemax');
+      expect(body).toContain('offlinemax');
+    });
+
+    test('should cap ids to 50', async () => {
+      const ids = Array.from({ length: 60 }, (_, i) => i + 1);
+      mockPost.mockResolvedValueOnce({ data: [] });
+
+      await igdbService.getMultiplayerModesByIds(ids);
+
+      const [, body] = mockPost.mock.calls[0];
+      expect(body).not.toContain('51,');
+    });
+  });
 });

@@ -46,6 +46,8 @@ export interface Game {
     name: string;
     slug: string;
   }>;
+  player_perspectives?: number[];
+  multiplayer_modes?: number[];
 }
 
 export interface Platform {
@@ -174,6 +176,31 @@ export interface GameVideo {
   name?: string;
   video_id?: string;
   game?: number;
+}
+
+export interface PlayerPerspective {
+  id: number;
+  name: string;
+  slug: string;
+  url?: string;
+}
+
+export interface MultiplayerMode {
+  id: number;
+  game?: number;
+  platform?: number;
+  campaigncoop?: boolean;
+  dropin?: boolean;
+  lancoop?: boolean;
+  massivemultiplayer?: boolean;
+  offlinecoop?: boolean;
+  offlinecoopmax?: number;
+  offlinemax?: number;
+  onlinecoop?: boolean;
+  onlinecoopmax?: number;
+  onlinemax?: number;
+  splitscreen?: boolean;
+  splitscreenonline?: boolean;
 }
 
 /**
