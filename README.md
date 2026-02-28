@@ -4,7 +4,7 @@ A robust Model Context Protocol (MCP) server for Node.js that provides seamless 
 
 ## Features
 
-- 🎮 **24 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, artworks, videos, keywords, themes, external games, release dates, and involved companies
+- 🎮 **25 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, artworks, videos, keywords, themes, external games, release dates, and involved companies
 - 🔐 **OAuth2 Authentication** with Twitch Developer credentials
 - 🛡️ **API Key Authentication** for the remote HTTP endpoint (optional, recommended for Vercel deployments)
 - ⚡ **Rate Limiting** with local throttling to respect IGDB API limits
@@ -331,6 +331,30 @@ Fetch multiple franchises at once by passing an array of franchise IDs. Includes
 ]
 ```
 
+#### 25. `search-games-by-names`
+Search multiple games by name and return full details in a single call. Resolves each name to its top search result ID in parallel, then fetches all details in one batch request. Optimal for multi-game lookups when IDs are not known in advance.
+
+**Input:**
+```json
+{
+  "names": ["Ico", "Sekiro: Shadows Die Twice", "Devil May Cry"]
+}
+```
+
+**Example Output:**
+```json
+[
+  { "id": 7170,  "name": "Ico",                        "rating": 85.2, "platforms": [8], ... },
+  { "id": 76882, "name": "Sekiro: Shadows Die Twice",  "rating": 91.0, "platforms": [170, 48, 6, 49], ... },
+  { "id": 134,   "name": "Devil May Cry",              "rating": 81.2, "platforms": [8], ... }
+]
+```
+
+**How it works internally:**
+1. Searches each name in parallel (`Promise.all`)
+2. Takes the top result ID for each name (skips names with no match)
+3. Fetches full details for all IDs in a single batch request
+
 ## Prerequisites
 
 - Node.js 18+ and npm/yarn
@@ -653,6 +677,6 @@ For issues, questions, or contributions:
 
 ---
 
-**Version**: 1.1.0
-**Last Updated**: February 23, 2026
+**Version**: 1.2.0
+**Last Updated**: February 28, 2026
 **Maintained by**: Your Name

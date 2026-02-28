@@ -12,6 +12,7 @@ interface GamesByCompanyArgs { companyId: number; limit?: number; }
 interface GamesUpcomingArgs { limit?: number; date_from?: number; date_to?: number; }
 interface LimitOnlyArgs { limit?: number; }
 interface IdListArgs { ids: number[]; limit?: number; }
+interface SearchGamesByNamesArgs { names: string[]; }
 
 function safeLimit(val: unknown, defaultVal: number, max = 50): number {
   if (val === undefined || val === null) return defaultVal;
@@ -429,6 +430,21 @@ export function createMCPServer(igdbService: IGDBService): Server {
       },
     },
     {
+      name: 'search-games-by-names',
+      description: 'Search multiple games by name and return full details. Resolves each name to its top result ID in parallel, then fetches all details in a single batch request.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          names: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Array of game names to search for (max 50)',
+          },
+        },
+        required: ['names'],
+      },
+    },
+    {
       name: 'franchises-by-ids',
       description: 'Get multiple franchises at once by an array of franchise IDs',
       inputSchema: {
@@ -613,6 +629,12 @@ export function createMCPServer(igdbService: IGDBService): Server {
           const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[games-by-ids] Fetching games by IDs:', ids);
           result = await igdbService.getGamesByIds(ids, undefined, safeLimit(rawLimit, 50));
+          break;
+        }
+        case 'search-games-by-names': {
+          const { names = [] } = args as unknown as SearchGamesByNamesArgs;
+          console.error('[search-games-by-names] Searching games by names:', names);
+          result = await igdbService.searchGamesByNames(names);
           break;
         }
         case 'franchises-by-ids': {

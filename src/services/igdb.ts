@@ -587,6 +587,31 @@ export class IGDBService {
   }
 
   /**
+   * Search multiple games by their names, returns full details
+   * Resolves each name to an ID in parallel, then fetches all details in one batch request
+   */
+  async searchGamesByNames(
+    names: string[],
+    fields?: string[]
+  ): Promise<Game[]> {
+    if (!names || names.length === 0) return [];
+
+    // Step 1: resolve each name to its top search result ID (in parallel)
+    const searchResults = await Promise.all(
+      names.map(name => this.searchGames(name, ['id', 'name']))
+    );
+
+    const ids = searchResults
+      .map(results => results[0]?.id)
+      .filter((id): id is number => id !== undefined);
+
+    if (ids.length === 0) return [];
+
+    // Step 2: batch fetch full details
+    return this.getGamesByIds(ids, fields);
+  }
+
+  /**
    * Get multiple games by their IDs
    */
   async getGamesByIds(

@@ -664,6 +664,45 @@ curl -X POST http://localhost:3000/mcp \
   }'
 ```
 
+### Search Games by Names
+
+Search multiple games by name and get full details in a single call. Each name is resolved in parallel to its top result ID, then all details are fetched in one batch request.
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 19,
+    "method": "tools/call",
+    "params": {
+      "name": "search-games-by-names",
+      "arguments": {
+        "names": ["Ico", "Sekiro: Shadows Die Twice", "Devil May Cry"]
+      }
+    }
+  }'
+```
+
+#### Response
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 19,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"id\":7170,\"name\":\"Ico\",\"rating\":85.2,...},{\"id\":76882,\"name\":\"Sekiro: Shadows Die Twice\",\"rating\":91.0,...},{\"id\":134,\"name\":\"Devil May Cry\",\"rating\":81.2,...}]"
+      }
+    ]
+  }
+}
+```
+
+> **Note**: Names that return no search results are silently skipped. The response will contain only the games that were successfully resolved.
+
 ---
 
 These examples cover all available endpoints and request formats!

@@ -146,6 +146,50 @@ describe('IGDBService', () => {
     });
   });
 
+  describe('searchGamesByNames', () => {
+    test('should return empty array when names is empty', async () => {
+      const result = await igdbService.searchGamesByNames([]);
+      expect(result).toEqual([]);
+      expect(mockPost).not.toHaveBeenCalled();
+    });
+
+    test('should search each name and batch-fetch details', async () => {
+      const mockSearchIco = [{ id: 7170, name: 'Ico' }];
+      const mockSearchSekiro = [{ id: 76882, name: 'Sekiro: Shadows Die Twice' }];
+      const mockDetails = [
+        { id: 7170, name: 'Ico', rating: 85 },
+        { id: 76882, name: 'Sekiro: Shadows Die Twice', rating: 91 }
+      ];
+
+      mockPost
+        .mockResolvedValueOnce({ data: mockSearchIco })
+        .mockResolvedValueOnce({ data: mockSearchSekiro })
+        .mockResolvedValueOnce({ data: mockDetails });
+
+      const result = await igdbService.searchGamesByNames(['Ico', 'Sekiro']);
+
+      expect(result).toEqual(mockDetails);
+      // 2 search calls + 1 batch details call
+      expect(mockPost).toHaveBeenCalledTimes(3);
+      // Last call should be the batch by IDs
+      const [, batchBody] = mockPost.mock.calls[2];
+      expect(batchBody).toContain('where id = (7170, 76882)');
+    });
+
+    test('should skip names that return no search results', async () => {
+      mockPost
+        .mockResolvedValueOnce({ data: [{ id: 134, name: 'Devil May Cry' }] })
+        .mockResolvedValueOnce({ data: [] }) // no results for second name
+        .mockResolvedValueOnce({ data: [{ id: 134, name: 'Devil May Cry', rating: 81 }] });
+
+      const result = await igdbService.searchGamesByNames(['Devil May Cry', 'NonExistentGame']);
+
+      expect(result).toHaveLength(1);
+      const [, batchBody] = mockPost.mock.calls[2];
+      expect(batchBody).toContain('where id = (134)');
+    });
+  });
+
   describe('getFranchisesByIds', () => {
     test('should return empty array when ids is empty', async () => {
       const result = await igdbService.getFranchisesByIds([]);
