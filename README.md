@@ -4,7 +4,7 @@ A robust Model Context Protocol (MCP) server for Node.js that provides seamless 
 
 ## Features
 
-- 🎮 **22 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, artworks, videos, keywords, themes, external games, release dates, and involved companies
+- 🎮 **24 MCP Tools** for querying games, platforms, genres, franchises, companies, covers, screenshots, artworks, videos, keywords, themes, external games, release dates, and involved companies
 - 🔐 **OAuth2 Authentication** with Twitch Developer credentials
 - 🛡️ **API Key Authentication** for the remote HTTP endpoint (optional, recommended for Vercel deployments)
 - ⚡ **Rate Limiting** with local throttling to respect IGDB API limits
@@ -291,6 +291,44 @@ Get game video details by video IDs (YouTube links and metadata).
   "ids": [9001, 9002],
   "limit": 50
 }
+```
+
+#### 23. `games-by-ids`
+Fetch multiple games at once by passing an array of game IDs. Uses IGDB's `where id = (id1, id2, ...)` syntax. Returns the same rich fields as `game-details`.
+
+**Input:**
+```json
+{
+  "ids": [119171, 1942, 9886],
+  "limit": 50
+}
+```
+
+**Example Output:**
+```json
+[
+  { "id": 119171, "name": "Elden Ring", "rating": 96.0, "platforms": [6, 48, 49, 167, 169] },
+  { "id": 1942,   "name": "The Witcher 3: Wild Hunt", "rating": 92.8, "platforms": [6, 48, 49] }
+]
+```
+
+#### 24. `franchises-by-ids`
+Fetch multiple franchises at once by passing an array of franchise IDs. Includes the list of game IDs belonging to each franchise.
+
+**Input:**
+```json
+{
+  "ids": [532, 13, 756],
+  "limit": 50
+}
+```
+
+**Example Output:**
+```json
+[
+  { "id": 532, "name": "The Legend of Zelda", "slug": "the-legend-of-zelda", "games": [1284, 1022, ...] },
+  { "id": 13,  "name": "Final Fantasy",       "slug": "final-fantasy",       "games": [413, 414, ...] }
+]
 ```
 
 ## Prerequisites

@@ -587,6 +587,58 @@ export class IGDBService {
   }
 
   /**
+   * Get multiple games by their IDs
+   */
+  async getGamesByIds(
+    ids: number[],
+    fields: string[] = [
+      'id', 'name', 'slug', 'summary', 'storyline', 'rating',
+      'aggregated_rating', 'first_release_date', 'release_dates',
+      'platforms', 'genres', 'game_modes', 'themes', 'keywords',
+      'involved_companies', 'cover', 'artworks', 'screenshots',
+      'videos', 'external_games'
+    ],
+    limit: number = 50
+  ): Promise<Game[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Game>('games', body);
+  }
+
+  /**
+   * Get multiple franchises by their IDs
+   */
+  async getFranchisesByIds(
+    ids: number[],
+    fields: string[] = ['id', 'name', 'slug', 'url', 'games'],
+    limit: number = 50
+  ): Promise<Franchise[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const safeLimit = Math.min(limit, 50);
+    const idList = ids.slice(0, 50).join(', ');
+    const fieldList = fields.join(', ');
+    const body = `
+      fields ${fieldList};
+      where id = (${idList});
+      limit ${safeLimit};
+    `;
+
+    return this.makeRequest<Franchise>('franchises', body);
+  }
+
+  /**
    * Get game videos by IDs
    */
   async getVideosByIds(

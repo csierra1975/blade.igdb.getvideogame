@@ -620,6 +620,50 @@ done
 curl http://localhost:3000/health | jq '.rateLimit'
 ```
 
+### Games by IDs
+
+Fetch multiple games in a single request by passing an array of game IDs.
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 17,
+    "method": "tools/call",
+    "params": {
+      "name": "games-by-ids",
+      "arguments": {
+        "ids": [119171, 1942, 9886],
+        "limit": 50
+      }
+    }
+  }'
+```
+
+### Franchises by IDs
+
+Fetch multiple franchises in a single request by passing an array of franchise IDs.
+
+#### Request
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 18,
+    "method": "tools/call",
+    "params": {
+      "name": "franchises-by-ids",
+      "arguments": {
+        "ids": [532, 13, 756],
+        "limit": 50
+      }
+    }
+  }'
+```
+
 ---
 
 These examples cover all available endpoints and request formats!

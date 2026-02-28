@@ -409,6 +409,44 @@ export function createMCPServer(igdbService: IGDBService): Server {
         required: ['ids'],
       },
     },
+    {
+      name: 'games-by-ids',
+      description: 'Get multiple games at once by an array of game IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of game IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of games to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
+    {
+      name: 'franchises-by-ids',
+      description: 'Get multiple franchises at once by an array of franchise IDs',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            items: { type: 'number' },
+            description: 'Array of franchise IDs (max 50)',
+          },
+          limit: {
+            type: 'number',
+            description: 'Maximum number of franchises to return (default 50, max 50)',
+          },
+        },
+        required: ['ids'],
+      },
+    },
   ];
 
   // Register tools
@@ -569,6 +607,18 @@ export function createMCPServer(igdbService: IGDBService): Server {
           const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
           console.error('[videos-by-ids] Fetching game videos');
           result = await igdbService.getVideosByIds(ids, undefined, safeLimit(rawLimit, 50));
+          break;
+        }
+        case 'games-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
+          console.error('[games-by-ids] Fetching games by IDs:', ids);
+          result = await igdbService.getGamesByIds(ids, undefined, safeLimit(rawLimit, 50));
+          break;
+        }
+        case 'franchises-by-ids': {
+          const { ids = [], limit: rawLimit } = args as unknown as IdListArgs;
+          console.error('[franchises-by-ids] Fetching franchises by IDs:', ids);
+          result = await igdbService.getFranchisesByIds(ids, undefined, safeLimit(rawLimit, 50));
           break;
         }
         default:
